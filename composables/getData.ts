@@ -3,7 +3,7 @@ import { doc, getDoc,collection } from "firebase/firestore";
 export default function useFirestore(collectionName:string, docName:string) {
     const { $firestore } = useNuxtApp()
     const db = $firestore
-    
+
     const data = ref([])
     let items
     const fetchData = async () => {
