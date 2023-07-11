@@ -1,8 +1,8 @@
 import { doc, getDoc,collection } from "firebase/firestore";
 
-export default function useFirestore(collectionName:string, docName:string) {
+export default function test(collectionName:string, docName:string) {
     const { $firestore } = useNuxtApp()
-    const db = $firestore
+    const db:any = $firestore
 
     const data = ref([])
     let items
@@ -28,4 +28,4 @@ export default function useFirestore(collectionName:string, docName:string) {
     return {
         items
     }
-  }
+}

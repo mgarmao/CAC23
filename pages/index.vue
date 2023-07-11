@@ -13,20 +13,27 @@
     </div> 
 
     <div id="tabs-menu">
-        <div class="tab">
-            <img src="../public/tabs-icon/chart-line-solid.svg" alt="tracker" class="tab-icon">
-            <div class="tab-header">Tracker</div>
-        </div>
 
-        <div class="tab">
-            <img src="../public/tabs-icon/calculator-solid.svg" alt="calculators" class="tab-icon">
-            <div class="tab-header">Calculators</div>
-        </div>
+        <NuxtLink to="/tracker">
+            <div class="tab">
+                <img src="../public/tabs-icon/chart-line-solid.svg" alt="tracker" class="tab-icon">
+                <div class="tab-header">Tracker</div>
+            </div>
+        </NuxtLink>
 
-        <div class="tab">
-            <img src="../public/tabs-icon/book-open-solid.svg" alt="articles" class="tab-icon">
-            <div class="tab-header">Articles</div>
-        </div>
+        <NuxtLink to="/calculator">
+            <div class="tab">
+                <img src="../public/tabs-icon/calculator-solid.svg" alt="calculators" class="tab-icon">
+                <div class="tab-header">Calculators</div>
+            </div>
+        </NuxtLink>
+
+        <NuxtLink to="/tracker">
+            <div class="tab">
+                <img src="../public/tabs-icon/book-open-solid.svg" alt="articles" class="tab-icon">
+                <div class="tab-header">Articles</div>
+            </div>
+        </NuxtLink>
     </div>
 
     <div id="articles">
@@ -62,8 +69,6 @@
 
 <script setup>
     const price = ref(700)
-    import useFirestore from '../composables/getData.ts'
-    useFirestore('pages',"JoAqH80R9SdTrVRJZw3z")
 </script>
 
 <style>
@@ -131,6 +136,11 @@
         align-items: center;
     }
 
+    .tab:hover{
+        background: #2e2e2e;
+        transition: all 0.5s;
+    }
+
     .tab-header {
         margin-top: 10px;
         margin-bottom: 10px; 
@@ -185,5 +195,8 @@
         margin-left: 0.5rem;
     }
 
+    a{
+        text-decoration: none;
+    }
 
 </style>
