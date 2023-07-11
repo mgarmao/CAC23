@@ -7,7 +7,7 @@
 </template>
 
 <script>
-    import auth from '../composables/auth.ts'
+    import auth from '../composables/auth/auth.ts'
     const email = ref("")
     const password = ref("")
 
