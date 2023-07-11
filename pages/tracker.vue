@@ -29,34 +29,40 @@
         </div>
     </div>
 
-    <div id="expense" v-if="loaded">
-        Hey
-        {{ items.length }}
-        <div v-for="item in items" :key="item.Name" >
-            {{ item.Name }}
+    <div id="expense">
+        <div v-if="isLoading">
+            Loading...
+        </div>
+        <div v-if="!isLoading">
+            <div v-for="item in theItems.value" :key="item.Name">{{ item.Name }}</div>
+            hey
         </div>
     </div>
 </template>
 
-<script setup>   
-    import {onAuthStateChanged } from "firebase/auth";
-    import { nextTick, ref } from 'vue';
-
-    const { $auth } = useNuxtApp()
-    const auth = $auth
-
-    const items = ref([])
+<script setup>    
+    const isLoading = ref(true);
+    const theItems = reactive({});
     const currentMonthExpenses = ref(500)
     const chosenCategory = ref("")
     const dollarInput = ref()
+    const loaded = false
 
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const d = new Date();
     const month = ref(months[d.getMonth()]); 
-    const loaded = ref(false)
-    
-    items.value = await getTrackerData(getUID())
-    console.log(await getTrackerData(getUID()))
+
+    getUID().then(uid => {
+        console.log(uid);
+        getTrackerData(uid).then(data=>{
+            if(data == []){
+                console.log("empty")
+            }
+            theItems.value = data; 
+            console.log(theItems)
+            isLoading.value = false;
+        })
+    });
 </script>
 
 <style scoped>

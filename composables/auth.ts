@@ -45,20 +45,16 @@ export async function login(email:string,password:string) {
     });
 }
 
-export async function getUID()  {
-    const { $auth } = useNuxtApp()
-    const auth:any = $auth
-    let uid:string = ''
-    
-    await onAuthStateChanged(auth, (user) => {
+export function getUID() {
+    const { $auth } = useNuxtApp();
+    const auth = $auth;
+    return new Promise((resolve, reject) => {
+      onAuthStateChanged(auth, (user) => {
         if (user) {
-            uid = user.uid;
-        } 
+          resolve(user.uid); // Resolve the promise with uid
+        } else {
+          reject(new Error("User not found"));
+        }
+      });
     });
-
-
-    return {
-        UID: uid
-    }
 }
-

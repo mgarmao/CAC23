@@ -5,30 +5,22 @@ export async function getTrackerData(uid:string)  {
     const { $firestore } = useNuxtApp()
     const { $auth } = useNuxtApp()
     const db:any = $firestore
-    const auth:any = $auth
-
-    const data = ref([])
     let items:any = []
-
 
     try {
         const colRef = collection(db, "users",uid,"expenseTracker");
         const collectionSnapshot = await getDocs(colRef)
-        console.log(collectionSnapshot)
         collectionSnapshot.forEach(async(thisDoc) => {
             const requestedDoc = await getDoc(doc(db,"users",uid,"expenseTracker",thisDoc.id))
             if(requestedDoc!=null){
                 items.push(requestedDoc.data())
             }
         })
+        return items   
     } 
     catch (error) {
         console.error('Error fetching data from Firestore:', error)
-    } 
-    
-    return {
-        items
-    }    
+    }  
 }
 
 
