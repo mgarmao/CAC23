@@ -2,7 +2,7 @@
     <div>
         <input v-model="email">
         <input v-model="password">
-        <button @click="login(email,password)">Login</button>
+        <button @click="createNewUser(email,password)">Create</button>
     </div>
 </template>
 

@@ -39,15 +39,13 @@
 </template>
 
 <script setup>   
-    import getUserTrackerData from '../composables/get/getUserTrackerData.ts'
     import {onAuthStateChanged } from "firebase/auth";
     import { nextTick, ref } from 'vue';
 
     const { $auth } = useNuxtApp()
     const auth = $auth
 
-    const items = ref(["names","other","Stuff"])
-    console.log(items)
+    const items = ref([])
     const currentMonthExpenses = ref(500)
     const chosenCategory = ref("")
     const dollarInput = ref()
@@ -56,29 +54,9 @@
     const d = new Date();
     const month = ref(months[d.getMonth()]); 
     const loaded = ref(false)
-
-    const forceRender = async () => {
-        // Here, we'll remove MyComponent
-        loaded.value = false;
-
-        // Then, wait for the change to get flushed to the DOM
-        await nextTick();
-
-        // Add MyComponent back in
-        loaded.value = true;
-    };
     
-    onMounted(()=>{
-        onAuthStateChanged(auth, async(user) => {
-            if (user) {
-                let data = await getUserTrackerData(user.uid)
-                items.value = data.items
-                console.log(items.value)
-                forceRender()
-                loaded.value = true 
-            } 
-        });
-    })
+    items.value = await getTrackerData(getUID())
+    console.log(await getTrackerData(getUID()))
 </script>
 
 <style scoped>
