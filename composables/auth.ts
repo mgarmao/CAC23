@@ -47,7 +47,7 @@ export async function login(email:string,password:string) {
 
 export function getUID() {
     const { $auth } = useNuxtApp();
-    const auth = $auth;
+    const auth:any = $auth;
     return new Promise((resolve, reject) => {
       onAuthStateChanged(auth, (user) => {
         if (user) {

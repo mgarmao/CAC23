@@ -51,12 +51,10 @@
     const month = ref(months[d.getMonth()]); 
 
     onMounted(async () => {
-        getUID().then((uid)=>{
-            getTrackerData(uid).then((result)=>{
-                theItems.value = result
-                isLoaded.value = true
-            })
-        })
+        const uid = await getUID()
+        const result = await getTrackerData(uid)
+        theItems.value = result
+        isLoaded.value = true
     });
     
 

@@ -1,27 +1,34 @@
 import { doc, getDocs, collection,limit,getDoc,updateDoc} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-export async function getTrackerData(uid:string)  {
-    const { $firestore } = useNuxtApp()
-    const { $auth } = useNuxtApp()
-    const db:any = $firestore
-    let items:any = []
-
+export async function getTrackerData(uid: string) {
+    const { $firestore } = useNuxtApp();
+    const { $auth } = useNuxtApp();
+    const db: any = $firestore;
+    let items: any = [];
+  
     try {
-        const colRef = collection(db, "users",uid,"expenseTracker");
-        const collectionSnapshot = await getDocs(colRef)
-        collectionSnapshot.forEach(async(thisDoc) => {
-            const requestedDoc = await getDoc(doc(db,"users",uid,"expenseTracker",thisDoc.id))
-            if(requestedDoc!=null){
-                items.push(requestedDoc.data())
-            }
-        })
-        return items   
-    } 
-    catch (error) {
-        console.error('Error fetching data from Firestore:', error)
-    }  
+      const colRef = collection(db, "users", uid, "expenseTracker");
+      const collectionSnapshot = await getDocs(colRef);
+  
+      const promiseArray = collectionSnapshot.docs.map(async (thisDoc) => {
+        const requestedDoc = await getDoc(
+          doc(db, "users", uid, "expenseTracker", thisDoc.id)
+        );
+        if (requestedDoc != null) {
+          return requestedDoc.data();
+        }
+      });
+  
+      const fulfilledItems = await Promise.all(promiseArray);
+      items = fulfilledItems.filter((item) => item !== undefined);
+    } catch (error) {
+      console.error("Error fetching data from Firestore:", error);
+    }
+  
+    return items;
 }
+  
 
 
 export async function test(collectionName:string, docName:string) {
