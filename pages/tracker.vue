@@ -30,39 +30,36 @@
     </div>
 
     <div id="expense">
-        <div v-if="isLoading">
+        <div v-if="!isLoaded">
             Loading...
         </div>
-        <div v-if="!isLoading">
-            <div v-for="item in theItems.value" :key="item.Name">{{ item.Name }}</div>
-            hey
+        <div v-if="isLoaded">
+            <div v-for="item in theItems" :key="item.Name">{{ item.Name }}</div>
         </div>
     </div>
 </template>
 
 <script setup>    
-    const isLoading = ref(true);
-    const theItems = reactive({});
+    const isLoaded = ref(false);
+    const theItems = ref();
     const currentMonthExpenses = ref(500)
     const chosenCategory = ref("")
     const dollarInput = ref()
-    const loaded = false
 
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const d = new Date();
     const month = ref(months[d.getMonth()]); 
 
-    getUID().then(uid => {
-        console.log(uid);
-        getTrackerData(uid).then(data=>{
-            if(data == []){
-                console.log("empty")
-            }
-            theItems.value = data; 
-            console.log(theItems)
-            isLoading.value = false;
+    onMounted(async () => {
+        getUID().then((uid)=>{
+            getTrackerData(uid).then((result)=>{
+                theItems.value = result
+                isLoaded.value = true
+            })
         })
     });
+    
+
 </script>
 
 <style scoped>
