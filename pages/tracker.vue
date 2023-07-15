@@ -34,14 +34,24 @@
             Loading...
         </div>
         <div v-if="isLoaded">
-            <div v-for="item in theItems" :key="item.Name">{{ item.Name }}</div>
+            <div v-for="item in items" :key="item.Name" class="item">
+                <div id="item-grid1">
+                    <div id="item-name">{{ item.Name }}</div>
+                    <div id="item-date">{{  }}</div>
+                    <div id="item-description">{{ item.Description }}</div>
+                </div>
+                
+                <div id="item-category">{{ item.Category }}</div>
+                <div id="item-price">${{ item.Price }}</div>
+                <div id="item-options">...</div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>    
     const isLoaded = ref(false);
-    const theItems = ref();
+    const items = ref();
     const currentMonthExpenses = ref(500)
     const chosenCategory = ref("")
     const dollarInput = ref()
@@ -53,11 +63,9 @@
     onMounted(async () => {
         const uid = await getUID()
         const result = await getTrackerData(uid)
-        theItems.value = result
+        items.value = result
         isLoaded.value = true
     });
-    
-
 </script>
 
 <style scoped>
@@ -165,5 +173,10 @@
 
     #expense{
         color: white;
+    }
+
+    .item{
+        display: flex;
+        margin-bottom: 2rem;
     }
 </style>
