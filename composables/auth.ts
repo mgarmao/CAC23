@@ -15,9 +15,9 @@ export function createNewUser (email:string, password:string) {
         const displayName = userCredential.user.displayName
         const uid = userCredential.user.uid
         await setDoc(doc(db, "users", uid), {
-            email: email,
-            displayName: displayName,
-            expenseTracker: []
+          email: email,
+          displayName: displayName,
+          expenseTracker: []
         });
     })
     .catch((error) => {

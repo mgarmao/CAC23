@@ -11,13 +11,13 @@
     </div>
 
     <div id="input-section">
-        <div id="plus-btn" v-on:click="createNewExpense">+</div>
+        <div id="plus-btn" @click="createNewExpense(uid, inputName, inputDescription, inputPrice, chosenCategory)">+</div>
         <div id="text-input">
-            <input id="name-input" placeholder="Name">
-            <textarea id="description-input" placeholder="Description"></textarea>
+            <input id="name-input" placeholder="Name" v-model="inputName">
+            <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
         </div>
         <div id="category-input">
-            <select id="categoy-selector" placeholder="Category" :value="chosenCategory">
+            <select id="categoy-selector" placeholder="Category" v-model="chosenCategory">
                 <option value="Food">Food</option>
                 <option value="Travel">Travel</option>
                 <option value="Tech">Tech</option>
@@ -25,7 +25,7 @@
             </select>
         </div>
         <div >
-            <input id="dollars-input" placeholder="$" :value="dollarInput">
+            <input id="dollars-input" placeholder="$" v-model="inputPrice">
         </div>
     </div>
 
@@ -34,35 +34,72 @@
             Loading...
         </div>
         <div v-if="isLoaded">
-            <div v-for="item in items" :key="item.Name" class="item">
-                <div id="item-grid1">
-                    <div id="item-name">{{ item.Name }}</div>
-                    <div id="item-date">{{  }}</div>
-                    <div id="item-description">{{ item.Description }}</div>
-                </div>
-                
-                <div id="item-category">{{ item.Category }}</div>
-                <div id="item-price">${{ item.Price }}</div>
-                <div id="item-options">...</div>
+            <div v-for="item in items" :key="item[1]">
+                <div class="item">
+                    <div class="item-header">
+                        <div class="item-name-date">
+                            <div class="item-name">{{ item[0].Name }}</div>
+                            <div class="item-date">{{ toDate(item[2]) }}</div> <!-- MAKE THIS BETTER !!!!!!!!!!!!!!!!!-->
+                        </div>
+                        <div class="item-description">{{ item[0].Description }}</div>
+                    </div>
+                <div class="item-details">
+                    <div class="item-category">{{ item[0].Category }}</div>
+                    <div class="item-price">${{ item[0].Price }}</div>
+                    
+                    <div class="item-options" @click="openModal(item[1])">...</div>
+                    
+                    <div v-if="isModalOpen">
+                        <ExpenseOptions @close="closeModal" :docID="targetExpenseID" :UID="uid"/>
+                    </div>
+                </div>                
+            </div>
+            <hr>
+            <br>    
             </div>
         </div>
     </div>
+    
 </template>
 
-<script setup>    
+<script setup>   
+    const uid = ref()
+
     const isLoaded = ref(false);
     const items = ref();
     const currentMonthExpenses = ref(500)
+
+    const inputName = ref("")
+    const inputDescription = ref("")
     const chosenCategory = ref("")
-    const dollarInput = ref()
+    const inputPrice = ref()
+
+
+    const isModalOpen = ref(false)
+    const targetExpenseID = ref()
 
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const d = new Date();
     const month = ref(months[d.getMonth()]); 
 
+    const openModal = (docID)=>{
+        isModalOpen.value = true;
+        targetExpenseID.value = docID
+    }
+
+    const closeModal = ()=>{
+        isModalOpen.value = false;
+    }
+
+    const toDate= (rawDate) =>{
+        const date = String(rawDate)
+        const newDate = date.substring(0, 10)
+        return newDate
+    }
+
     onMounted(async () => {
-        const uid = await getUID()
-        const result = await getTrackerData(uid)
+        uid.value = await getUID()
+        const result = await getTrackerData(uid.value)
         items.value = result
         isLoaded.value = true
     });
@@ -73,6 +110,10 @@
         border:none;
         outline: none;
         color: #ffffff;
+    }
+
+    hr{
+        border-color: #282828;
     }
 
     #header{
@@ -176,7 +217,40 @@
     }
 
     .item{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1rem;
+        font-size: 15px;
+    }
+
+    .item-name-date{
         display: flex;
-        margin-bottom: 2rem;
+    }
+
+    .item-date{
+        padding-left: 0.7rem;
+        margin-top: 0.25rem;
+    }
+
+    .item-name{
+        font-size: 20px;
+        padding-bottom: 0.2rem;
+    }
+
+    .item-description{
+        width: 13rem; /* Adjust the width of the div as needed */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .item-details{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 10px;
+        height: 1rem;
+        
+        padding-top: 1.4rem;
+        font-size: 18px;
     }
 </style>
