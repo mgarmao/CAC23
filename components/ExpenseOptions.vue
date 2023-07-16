@@ -1,16 +1,22 @@
 <template>
     <div class="modal-overlay" @click.self="handleChange">
         <div class="modal-container">
-            <button @click="deleteExpense(props.UID, props.docID)">Delete</button>
+            <button @click="handleDelete">Delete</button>
         </div>
     </div>
 </template>
   
 <script setup>
-    const emit = defineEmits(['close'])
+    const emit = defineEmits(['close','deletedItem'])
     const props = defineProps(['UID','docID'])
 
     const handleChange = () => {
+      emit('close')
+    }
+
+    const handleDelete = ()=>{
+      emit('deletedItem')
+      deleteExpense(props.UID, props.docID)
       emit('close')
     }
 

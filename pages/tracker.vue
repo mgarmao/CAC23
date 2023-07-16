@@ -11,7 +11,7 @@
     </div>
 
     <div id="input-section">
-        <div id="plus-btn" @click="createNewExpense(uid, inputName, inputDescription, inputPrice, chosenCategory)">+</div>
+        <div id="plus-btn" @click="newExpense">+</div>
         <div id="text-input">
             <input id="name-input" placeholder="Name" v-model="inputName">
             <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
@@ -50,7 +50,7 @@
                     <div class="item-options" @click="openModal(item[1])">...</div>
                     
                     <div v-if="isModalOpen">
-                        <ExpenseOptions @close="closeModal" :docID="targetExpenseID" :UID="uid"/>
+                        <ExpenseOptions @close="closeModal" @deletedItem="getData" :docID="targetExpenseID" :UID="uid"/>
                     </div>
                 </div>                
             </div>
@@ -74,7 +74,6 @@
     const chosenCategory = ref("")
     const inputPrice = ref()
 
-
     const isModalOpen = ref(false)
     const targetExpenseID = ref()
 
@@ -94,15 +93,37 @@
     const toDate= (rawDate) =>{
         const date = String(rawDate)
         const newDate = date.substring(0, 10)
+
+        var dateStamp = ref(date.toString().substr(0,21))
+        var dayOfWeek = ref(date.toString().substr(0,3))
+        var month = ref(date.toString().substr(4,4))
+        var day = ref(date.toString().substr(8,2))
+        var year = ref(date.toString().substr(11,4))
+        var hour = ref(date.toString().substr(16,2))
+        var minute = ref(date.toString().substr(19,2))
+
         return newDate
     }
 
+    const newExpense = ()=>{
+        createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
+        getData()
+    }
+    
+
     onMounted(async () => {
+        getData()
+    });
+
+    const getData = async()=>{
         uid.value = await getUID()
         const result = await getTrackerData(uid.value)
         items.value = result
         isLoaded.value = true
-    });
+    }
+
+    console.log(realTimeDB())
+
 </script>
 
 <style scoped>
@@ -221,6 +242,10 @@
         grid-template-columns: 1fr 1fr;
         grid-gap: 1rem;
         font-size: 15px;
+    }
+
+    .item-header{
+        padding-left: 0.5rem;
     }
 
     .item-name-date{

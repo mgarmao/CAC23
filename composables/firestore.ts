@@ -1,4 +1,4 @@
-import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot} from "firebase/firestore";
+import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot,query,orderBy} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export async function getTrackerData(uid: string) {
@@ -9,8 +9,8 @@ export async function getTrackerData(uid: string) {
   
     try {
         const colRef = collection(db, "users", uid, "expenseTracker");
-        const collectionSnapshot = await getDocs(colRef);
-
+        const q = query(colRef, orderBy("Date","desc"));
+        const collectionSnapshot = await getDocs(q);
         const promiseArray = collectionSnapshot.docs.map(async (thisDoc) => {
             const requestedDoc = await getDoc(doc(db, "users", uid, "expenseTracker", thisDoc.id));
             if ((requestedDoc != null)&&(requestedDoc!=undefined)&&(requestedDoc.data().visible==true)) {
@@ -65,8 +65,21 @@ export function createNewExpense(uid:string, name:string, description:string, pr
         }
     }
   
-    updateData() 
+    updateData()
 }
 
 
-
+export async function realTimeDB (){
+    let uid = await getUID()
+    console.log("realTimeDB")
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+    let data:any = []
+    const collectionRef = query(collection(db, "users",uid,"expenseTracker"));
+    const stopListening = onSnapshot(collectionRef,(querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            data.push([doc.data(),doc.id]);
+        });
+    });
+    return data
+}
