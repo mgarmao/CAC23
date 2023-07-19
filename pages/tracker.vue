@@ -17,7 +17,8 @@
             <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
         </div>
         <div id="category-input">
-            <select id="categoy-selector" placeholder="Category" v-model="chosenCategory">
+            <select id="category-selector" placeholder="Category" v-model="chosenCategory">
+                <option value="" disabled selected >Category</option>
                 <option value="Food">Food</option>
                 <option value="Travel">Travel</option>
                 <option value="Tech">Tech</option>
@@ -50,7 +51,7 @@
                     <img src="../public/more-icon.svg" alt="..." class="item-options" @click="openModal(item[1])"/>
                     
                     <div v-if="isModalOpen">
-                        <ExpenseOptions @close="closeModal" @deletedItem="getData" :docID="targetExpenseID" :UID="uid"/>
+                        <ExpenseOptions @close="closeModal" @deletedItem="getData" @dateChange="getData" :docID="targetExpenseID" :UID="uid"/>
                     </div>
                 </div>                
             </div>
@@ -181,12 +182,13 @@
         background-color: #7997FF;
         margin-bottom: 3rem;
         padding: 15px;
-        padding-top: 8px;
+        padding-top: 7px;
         padding-bottom: 8px;
         border-radius: 50%;
 
         font-size: 30px;
         color: black;
+        cursor: pointer;
     }
 
     #text-input{
@@ -219,13 +221,14 @@
         color: #fff;
     }
 
-    #categoy-selector{
+    #category-selector{
         font-size: 18px;
         height: 2.2rem;
         background: #282828;
         border:none;
         color: #fff;
         margin-left: -0.1rem;
+        cursor: pointer;
     }
 
     #dollars-input{
@@ -295,6 +298,7 @@
     .item-options{
         width: 0.5rem;
         margin-top: -0.2rem;
+        cursor: pointer;
     }
 
     .item-details{

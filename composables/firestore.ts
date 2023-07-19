@@ -1,12 +1,13 @@
-import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot,query,orderBy,deleteDoc} from "firebase/firestore";
+import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot,query,orderBy,deleteDoc, Timestamp} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 export async function getTrackerData(uid: string) {
     const { $firestore } = useNuxtApp();
     const { $auth } = useNuxtApp();
     const db: any = $firestore;
     let items: any = [];
-    
+
     let monthlyTotal = 0
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const d = new Date();
@@ -80,18 +81,27 @@ export function createNewExpense(uid:string, name:string, description:string, pr
     updateData()
 }
 
-
-export async function realTimeDB (){
-    let uid = await getUID()
-    console.log("realTimeDB")
+export async function changeExpenseDate(uid:String, docID:string, date:string, time:string){
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
-    let data:any = []
-    const collectionRef = query(collection(db, "users",uid,"expenseTracker"));
-    const stopListening = onSnapshot(collectionRef,(querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            data.push([doc.data(),doc.id]);
-        });
-    });
-    return data
+    try{
+        let newDate 
+        if(date!=undefined){
+        console.log("IN")
+            if(time==undefined){
+                newDate = new Date(date)
+                newDate.setDate(newDate.getDate()+1)
+            }
+            else{
+                newDate = new Date(date+" "+time)
+            }
+            const docRef = doc(db, "users", uid, "expenseTracker", docID);
+            await updateDoc(docRef, {
+                Date: Timestamp.fromDate(newDate)
+            });
+        }
+    }
+    catch(error){
+        console.log(error)
+    }
 }
