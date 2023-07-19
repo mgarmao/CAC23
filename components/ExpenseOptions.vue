@@ -7,18 +7,18 @@
 </template>
   
 <script setup>
-    const emit = defineEmits(['close','deletedItem'])
-    const props = defineProps(['UID','docID'])
+  const emit = defineEmits(['close','deletedItem'])
+  const props = defineProps(['UID','docID'])
 
-    const handleChange = () => {
-      emit('close')
-    }
+  const handleChange = () => {
+    emit('close')
+  }
 
-    const handleDelete = ()=>{
-      emit('deletedItem')
-      deleteExpense(props.UID, props.docID)
-      emit('close')
-    }
+  const handleDelete = ()=>{
+    emit('deletedItem')
+    deleteExpense(props.UID, props.docID)
+    emit('close')
+  }
 
 </script>
 

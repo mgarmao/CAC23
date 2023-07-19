@@ -1,4 +1,4 @@
-import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot,query,orderBy} from "firebase/firestore";
+import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot,query,orderBy,deleteDoc} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export async function getTrackerData(uid: string) {
@@ -6,6 +6,11 @@ export async function getTrackerData(uid: string) {
     const { $auth } = useNuxtApp();
     const db: any = $firestore;
     let items: any = [];
+    
+    let monthlyTotal = 0
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const d = new Date();
+    const month = months[d.getMonth()]
   
     try {
         const colRef = collection(db, "users", uid, "expenseTracker");
@@ -13,8 +18,19 @@ export async function getTrackerData(uid: string) {
         const collectionSnapshot = await getDocs(q);
         const promiseArray = collectionSnapshot.docs.map(async (thisDoc) => {
             const requestedDoc = await getDoc(doc(db, "users", uid, "expenseTracker", thisDoc.id));
-            if ((requestedDoc != null)&&(requestedDoc!=undefined)&&(requestedDoc.data().visible==true)) {
+            if ((requestedDoc != null)&&(requestedDoc!=undefined)) {
+                if(requestedDoc.data()==undefined){
+                    console.log(requestedDoc)
+                } 
+
+                const itemMonth =  await String(requestedDoc.data().Date.toDate()).substring(4,7)
+                if(month == itemMonth){
+                    monthlyTotal+= parseFloat(requestedDoc.data().Price)
+                }
+
+                
                 return [requestedDoc.data(),thisDoc.id,requestedDoc.data().Date.toDate()];
+                
             }
         });
   
@@ -25,18 +41,15 @@ export async function getTrackerData(uid: string) {
         console.error("Error fetching data from Firestore:", error);
     }
   
-    return items;
+    return [items,monthlyTotal];
 }
 
 export async function  deleteExpense(uid:any, docID:string){
-    console.log("delete")
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
     try {
         const docRef = doc(db, "users", uid,"expenseTracker", docID);
-        await updateDoc(docRef, {
-            visible: false
-        });
+        await deleteDoc(docRef);
     } 
     catch (error) {
         console.error('Error fetching data from Firestore:', error)
@@ -49,7 +62,6 @@ export function createNewExpense(uid:string, name:string, description:string, pr
 
     const updateData = async () => {
         try {
-            console.log(price)
             await addDoc(collection(db, "users", uid, "expenseTracker"), {
                 visible:true,
                 Name: name,
@@ -57,8 +69,8 @@ export function createNewExpense(uid:string, name:string, description:string, pr
                 Date:serverTimestamp(),
                 Price: price,
                 Category: category,
-
-              });
+            });
+            return true
         } 
         catch (error) {
             console.error('Error fetching data from Firestore:', error)

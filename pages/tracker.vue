@@ -7,7 +7,7 @@
     </div>
 
     <div id="month-stats">
-        <div id="monthly-total">Monthly Total: ${{currentMonthExpenses}}</div>
+        <div id="monthly-total" >Monthly Total: $<span v-if="isLoaded">{{items[1]}}</span></div>
     </div>
 
     <div id="input-section">
@@ -26,7 +26,7 @@
         </div>
         <div >
             <input id="dollars-input" placeholder="$" v-model="inputPrice">
-        </div>
+        </div>        
     </div>
 
     <div id="expense">
@@ -34,12 +34,12 @@
             Loading...
         </div>
         <div v-if="isLoaded">
-            <div v-for="item in items" :key="item[1]">
+            <div v-for="item in items[0]" :key="item[1]">
                 <div class="item">
                     <div class="item-header">
                         <div class="item-name-date">
                             <div class="item-name">{{ item[0].Name }}</div>
-                            <div class="item-date">{{ toDate(item[2]) }}</div> <!-- MAKE THIS BETTER !!!!!!!!!!!!!!!!!-->
+                            <div class="item-date">{{ toDate(item[2]) }}</div>
                         </div>
                         <div class="item-description">{{ item[0].Description }}</div>
                     </div>
@@ -47,7 +47,7 @@
                     <div class="item-category">{{ item[0].Category }}</div>
                     <div class="item-price">${{ item[0].Price }}</div>
                     
-                    <div class="item-options" @click="openModal(item[1])">...</div>
+                    <img src="../public/more-icon.svg" alt="..." class="item-options" @click="openModal(item[1])"/>
                     
                     <div v-if="isModalOpen">
                         <ExpenseOptions @close="closeModal" @deletedItem="getData" :docID="targetExpenseID" :UID="uid"/>
@@ -90,30 +90,34 @@
         isModalOpen.value = false;
     }
 
-    const toDate= (rawDate) =>{
-        const date = String(rawDate)
-        const newDate = date.substring(0, 10)
+    function toDate(rawDate){
+        let outputDate = ""
+        if(typeof rawDate == "object"){
+            const date = String(rawDate)
 
-        var dateStamp = ref(date.toString().substr(0,21))
-        var dayOfWeek = ref(date.toString().substr(0,3))
-        var month = ref(date.toString().substr(4,4))
-        var day = ref(date.toString().substr(8,2))
-        var year = ref(date.toString().substr(11,4))
-        var hour = ref(date.toString().substr(16,2))
-        var minute = ref(date.toString().substr(19,2))
+            const dateStamp = date.substr(0,21)
+            const dayOfWeek = date.substr(0,3)
+            const month = date.substr(4,4)
+            const day = date.substr(8,2)
+            const year = date.substr(11,4)
+            const hour = date.substr(16,2)
+            const minute = date.substr(19,2)
 
-        return newDate
+            outputDate = month+day
+        }
+        else{
+            outputDate = rawDate.toString().substr(0,10)
+        }
+        
+        return outputDate
     }
 
-    const newExpense = ()=>{
-        createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
-        getData()
+    const newExpense = async()=>{
+        if((inputName.value != "") && (inputDescription.value!="")&&(inputPrice.value!="")&&(chosenCategory.value!="")){
+            await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
+            getData()
+        }
     }
-    
-
-    onMounted(async () => {
-        getData()
-    });
 
     const getData = async()=>{
         uid.value = await getUID()
@@ -122,8 +126,9 @@
         isLoaded.value = true
     }
 
-    console.log(realTimeDB())
-
+    onMounted(async () => {
+        getData()
+    });
 </script>
 
 <style scoped>
@@ -246,6 +251,7 @@
 
     .item-header{
         padding-left: 0.5rem;
+        width: 15rem;
     }
 
     .item-name-date{
@@ -253,20 +259,42 @@
     }
 
     .item-date{
-        padding-left: 0.7rem;
+        padding-left: 0.8rem;
+        width: 50px;
         margin-top: 0.25rem;
     }
 
     .item-name{
         font-size: 20px;
         padding-bottom: 0.2rem;
-    }
 
-    .item-description{
-        width: 13rem; /* Adjust the width of the div as needed */
+        max-width: 10rem; 
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .item-description{
+        max-width: 15rem; 
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .item-category{
+        text-align: center;
+        width: 3rem;
+    }
+
+    .item-price{
+        width: 3rem; 
+        overflow: hidden;
+        text-overflow: ellipsis;        
+    }
+
+    .item-options{
+        width: 0.5rem;
+        margin-top: -0.2rem;
     }
 
     .item-details{
