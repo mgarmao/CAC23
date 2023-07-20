@@ -7,43 +7,61 @@ export async function getTrackerData(uid: string) {
     const { $auth } = useNuxtApp();
     const db: any = $firestore;
     let items: any = [];
-
-    let monthlyTotal = 0
+    let monthlyTotal = 0;
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const d = new Date();
-    const month = months[d.getMonth()]
-  
-    try {
-        const colRef = collection(db, "users", uid, "expenseTracker");
-        const q = query(colRef, orderBy("Date","desc"));
-        const collectionSnapshot = await getDocs(q);
-        const promiseArray = collectionSnapshot.docs.map(async (thisDoc) => {
-            const requestedDoc = await getDoc(doc(db, "users", uid, "expenseTracker", thisDoc.id));
-            if ((requestedDoc != null)&&(requestedDoc!=undefined)) {
-                if(requestedDoc.data()==undefined){
-                    console.log(requestedDoc)
-                } 
+    const currentMonth = months[d.getMonth()];
 
-                const itemMonth =  await String(requestedDoc.data().Date.toDate()).substring(4,7)
-                if(month == itemMonth){
-                    monthlyTotal+= parseFloat(requestedDoc.data().Price)
+    const itemsByMonth: { month: string; year: string; data: any[]; monthlyTotal: number }[] = [];
+    
+    let errorTracker = 0
+
+    async function getData(){
+        try {
+            const colRef = collection(db, "users", uid, "expenseTracker");
+            const q = query(colRef, orderBy("Date", "desc"));
+            const collectionSnapshot = await getDocs(q);
+    
+            // Process each document in the collection
+            collectionSnapshot.docs.forEach((thisDoc) => {
+                try{
+                    const requestedDoc = thisDoc.data();
+                    if (requestedDoc && requestedDoc.Date !== undefined) {
+                        const itemMonth = String(requestedDoc.Date.toDate()).substring(4, 7);
+                        const itemYear = String(requestedDoc.Date.toDate()).substring(11,16)
+
+                        // Check if the month object already exists in the array
+                        const existingMonthIndex = itemsByMonth.findIndex((item) => item.month === itemMonth && item.year === itemYear);
+                        if (existingMonthIndex >= 0) {
+                            // Add the item to the existing month's array
+                            itemsByMonth[existingMonthIndex].data.push([requestedDoc, thisDoc.id, requestedDoc.Date.toDate()]);
+
+                            itemsByMonth[existingMonthIndex].monthlyTotal += parseFloat(requestedDoc.Price);
+                        } else {
+                            // Create a new month object and add the item to its array
+                            const newMonthObject = { month: itemMonth, year: itemYear, data: [[requestedDoc, thisDoc.id, requestedDoc.Date.toDate()]], monthlyTotal: parseFloat(requestedDoc.Price) };
+                            itemsByMonth.push(newMonthObject);
+                        }
+                    }
                 }
-
-                
-                return [requestedDoc.data(),thisDoc.id,requestedDoc.data().Date.toDate()];
-                
-            }
-        });
-  
-      const fulfilledItems = await Promise.all(promiseArray);
-      items = fulfilledItems.filter((item) => item !== undefined);
-    } 
-    catch (error) {
-        console.error("Error fetching data from Firestore:", error);
+                catch(error){
+                    console.log(error)
+                    errorTracker++                    
+                }
+            });
+    
+            // Sort the array of month objects based on the month's value
+            itemsByMonth.sort((a, b) => months.indexOf(b.month) - months.indexOf(a.month));
+    
+        } catch (error) {
+            console.error("Error fetching data from Firestore:", error);
+        }
     }
-  
-    return [items,monthlyTotal];
+    await getData()
+
+    return [itemsByMonth];
 }
+
 
 export async function  deleteExpense(uid:any, docID:string){
     const { $firestore } = useNuxtApp()
@@ -87,7 +105,6 @@ export async function changeExpenseDate(uid:String, docID:string, date:string, t
     try{
         let newDate 
         if(date!=undefined){
-        console.log("IN")
             if(time==undefined){
                 newDate = new Date(date)
                 newDate.setDate(newDate.getDate()+1)

@@ -7,7 +7,7 @@
     </div>
 
     <div id="month-stats">
-        <div id="monthly-total" >Monthly Total: $<span v-if="isLoaded">{{items[1]}}</span></div>
+        <div id="monthly-total" >Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
     </div>
 
     <div id="input-section">
@@ -35,28 +35,31 @@
             Loading...
         </div>
         <div v-if="isLoaded">
-            <div v-for="item in items[0]" :key="item[1]">
-                <div class="item">
-                    <div class="item-header">
-                        <div class="item-name-date">
-                            <div class="item-name">{{ item[0].Name }}</div>
-                            <div class="item-date">{{ toDate(item[2]) }}</div>
+            <div  v-for="month in items[0]" :key="1">
+                <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div>
+                <div v-for="item in month.data" :key="item[1]">
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-name-date">
+                                <div class="item-name">{{ item[0].Name }}</div>
+                                <div class="item-date">{{ toDate(item[2]) }}</div>
+                            </div>
+                            <div class="item-description">{{ item[0].Description }}</div>
                         </div>
-                        <div class="item-description">{{ item[0].Description }}</div>
-                    </div>
-                <div class="item-details">
-                    <div class="item-category">{{ item[0].Category }}</div>
-                    <div class="item-price">${{ item[0].Price }}</div>
-                    
-                    <img src="../public/more-icon.svg" alt="..." class="item-options" @click="openModal(item[1])"/>
-                    
-                    <div v-if="isModalOpen">
-                        <ExpenseOptions @close="closeModal" @deletedItem="getData" @dateChange="getData" :docID="targetExpenseID" :UID="uid"/>
-                    </div>
-                </div>                
-            </div>
-            <hr>
-            <br>    
+                    <div class="item-details">
+                        <div class="item-category">{{ item[0].Category }}</div>
+                        <div class="item-price">${{ item[0].Price }}</div>
+                        
+                        <img src="../public/more-icon.svg" alt="..." class="item-options" @click="openModal(item[1])"/>
+                        
+                        <div v-if="isModalOpen">
+                            <ExpenseOptions @close="closeModal" @deletedItem="getData" @dateChange="getData" :docID="targetExpenseID" :UID="uid"/>
+                        </div>
+                    </div>                
+                </div>
+                <hr>
+                <br>    
+                </div>
             </div>
         </div>
     </div>
@@ -68,7 +71,7 @@
 
     const isLoaded = ref(false);
     const items = ref();
-    const currentMonthExpenses = ref(500)
+    const monthlyTotal = ref()
 
     const inputName = ref("")
     const inputDescription = ref("")
@@ -78,10 +81,13 @@
     const isModalOpen = ref(false)
     const targetExpenseID = ref()
 
+    const thisMonthHasAnItem = ref(false)
+
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const d = new Date();
     const month = ref(months[d.getMonth()]); 
-
+    const currentMonth = ref(month.value.substring(0,3))
+    
     const openModal = (docID)=>{
         isModalOpen.value = true;
         targetExpenseID.value = docID
@@ -120,11 +126,26 @@
         }
     }
 
+    const getThisMonthsTotal = ()=>{
+        let firstItemMonth = items.value[0][0].month
+        let thisMonthTrunked = month.value.substring(0,3)
+        if(firstItemMonth==thisMonthTrunked){
+            monthlyTotal.value = items.value[0][0].monthlyTotal
+        }
+        else{
+            monthlyTotal.value = 0
+        }
+    }
+
     const getData = async()=>{
         uid.value = await getUID()
         const result = await getTrackerData(uid.value)
         items.value = result
         isLoaded.value = true
+        if(items.value[0].month==month){
+            thisMonthHasAnItem.value = true
+        }
+        getThisMonthsTotal()
     }
 
     onMounted(async () => {
@@ -245,6 +266,18 @@
         color: white;
     }
 
+    .month-title{
+        color: #909090;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 400;
+        padding-bottom: 0.7rem;
+    }
+
+    .past-month-total{
+        margin-left: 0.3rem;
+        font-size: 19px;
+    }
     .item{
         display: grid;
         grid-template-columns: 1fr 1fr;

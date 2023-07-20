@@ -13,6 +13,7 @@
 </template>
   
 <script setup>
+  import {changeExpenseDate} from '../composables/firestore.ts';
   const emit = defineEmits(['close','deletedItem','dateChange'])
   const props = defineProps(['UID','docID'])
   const date = ref()
@@ -37,12 +38,8 @@
 
   const handleDateChange = ()=>{
     emit('dateChange')
-    console.log(time.value)
     changeExpenseDate(props.UID,props.docID,date.value,time.value)
   }
-
- 
-
 </script>
 
 <style scoped>
@@ -97,7 +94,7 @@
   }
 
   #delete-btn{
-    margin-top:1rem;
+    margin-top:2rem;
     padding: 6px 12px;
     border: none;
     background-color: #e74c3c;
@@ -141,9 +138,6 @@
     color: transparent; /* Hide default arrow icon */
     padding-right: 5px;
   }
-
-
-  
 
   input[type="time"] {
     appearance: none;
