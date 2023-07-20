@@ -2,7 +2,7 @@ import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
-export async function getTrackerData(uid: string) {
+export async function getTrackerData(uid: string, errors:number) {
     const { $firestore } = useNuxtApp();
     const { $auth } = useNuxtApp();
     const db: any = $firestore;
@@ -14,7 +14,7 @@ export async function getTrackerData(uid: string) {
 
     const itemsByMonth: { month: string; year: string; data: any[]; monthlyTotal: number }[] = [];
     
-    let errorTracker = 0
+    let errorTracker = errors
 
     async function getData(){
         try {
@@ -26,7 +26,7 @@ export async function getTrackerData(uid: string) {
             collectionSnapshot.docs.forEach((thisDoc) => {
                 try{
                     const requestedDoc = thisDoc.data();
-                    if (requestedDoc && requestedDoc.Date !== undefined) {
+                    if (requestedDoc !== undefined) {
                         const itemMonth = String(requestedDoc.Date.toDate()).substring(4, 7);
                         const itemYear = String(requestedDoc.Date.toDate()).substring(11,16)
 
@@ -46,7 +46,6 @@ export async function getTrackerData(uid: string) {
                 }
                 catch(error){
                     console.log(error)
-                    errorTracker++                    
                 }
             });
     
@@ -95,7 +94,6 @@ export function createNewExpense(uid:string, name:string, description:string, pr
             console.error('Error fetching data from Firestore:', error)
         }
     }
-  
     updateData()
 }
 

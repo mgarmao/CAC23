@@ -53,7 +53,7 @@
                         <img src="../public/more-icon.svg" alt="..." class="item-options" @click="openModal(item[1])"/>
                         
                         <div v-if="isModalOpen">
-                            <ExpenseOptions @close="closeModal" @deletedItem="getData" @dateChange="getData" :docID="targetExpenseID" :UID="uid"/>
+                            <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
                         </div>
                     </div>                
                 </div>
@@ -122,19 +122,29 @@
     const newExpense = async()=>{
         if((inputName.value != "") && (inputDescription.value!="")&&(inputPrice.value!="")&&(chosenCategory.value!="")){
             await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
-            getData()
+            setTimeout(() => { getData() }, 500);
         }
     }
 
     const getThisMonthsTotal = ()=>{
-        let firstItemMonth = items.value[0][0].month
-        let thisMonthTrunked = month.value.substring(0,3)
-        if(firstItemMonth==thisMonthTrunked){
-            monthlyTotal.value = items.value[0][0].monthlyTotal
+        if(items.value[0][0]!=undefined){
+            let firstItemMonth = items.value[0][0].month
+            let thisMonthTrunked = month.value.substring(0,3)
+            if(firstItemMonth==thisMonthTrunked){
+                monthlyTotal.value = items.value[0][0].monthlyTotal
+            }
+            else{
+                monthlyTotal.value = 0
+            }
         }
         else{
             monthlyTotal.value = 0
         }
+
+    }
+
+    const getDataDelayed = ()=>{
+        setTimeout(() => { getData() }, 200);
     }
 
     const getData = async()=>{
