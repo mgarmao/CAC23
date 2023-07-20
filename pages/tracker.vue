@@ -11,13 +11,13 @@
     </div>
 
     <div id="input-section">
-        <div id="plus-btn" @click="newExpense">+</div>
+        <div id="plus-btn" @click="newExpense" >+</div>
         <div id="text-input">
-            <input id="name-input" placeholder="Name" v-model="inputName">
-            <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
+            <input id="name-input" placeholder="Name" v-model="inputName" :class="inputNameClass">
+            <textarea id="description-input" placeholder="Description" v-model="inputDescription" :class="inputDescriptionClass"></textarea>
         </div>
         <div id="category-input">
-            <select id="category-selector" placeholder="Category" v-model="chosenCategory">
+            <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="inputCategoryClass">
                 <option value="" disabled selected >Category</option>
                 <option value="Food">Food</option>
                 <option value="Travel">Travel</option>
@@ -26,7 +26,7 @@
             </select>
         </div>
         <div >
-            <input id="dollars-input" placeholder="$" v-model="inputPrice">
+            <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="inputPriceClass" type="number">
         </div>        
     </div>
 
@@ -68,20 +68,27 @@
 
 <script setup>   
     const uid = ref()
-
+    
     const isLoaded = ref(false);
     const items = ref();
     const monthlyTotal = ref()
 
+    const canCreate = ref(false)
+
     const inputName = ref("")
     const inputDescription = ref("")
     const chosenCategory = ref("")
-    const inputPrice = ref()
+    const inputPrice = ref("")
 
     const isModalOpen = ref(false)
     const targetExpenseID = ref()
 
     const thisMonthHasAnItem = ref(false)
+
+    const inputNameClass = ref("")
+    const inputDescriptionClass = ref("")
+    const inputCategoryClass = ref("")
+    const inputPriceClass = ref("")
 
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const d = new Date();
@@ -120,9 +127,35 @@
     }
 
     const newExpense = async()=>{
-        if((inputName.value != "") && (inputDescription.value!="")&&(inputPrice.value!="")&&(chosenCategory.value!="")){
+        if((inputName.value != "")&&(inputPrice.value!="")&&(chosenCategory.value!="")){
             await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
+            inputName.value = ""
+            inputPrice.value = ""
+            inputCategoryClass.value = "Category"
+
             setTimeout(() => { getData() }, 500);
+        }
+        else{
+            if(inputName.value ==""){
+                inputNameClass.value = "highlight"
+            }
+            else{
+                inputNameClass.value = ""
+            }
+
+            if(inputPrice.value==""){
+                inputPriceClass.value = "highlight"
+            }
+            else{
+                inputPriceClass.value = ""
+            }
+
+            if(chosenCategory.value==""){
+                inputCategoryClass.value= "highlight"
+            }
+            else{
+                inputCategoryClass.value= ""
+            }
         }
     }
 
@@ -156,6 +189,7 @@
             thisMonthHasAnItem.value = true
         }
         getThisMonthsTotal()
+        console.log(items.value)
     }
 
     onMounted(async () => {
@@ -165,7 +199,7 @@
 
 <style scoped>
     input, textarea, input:focus, textarea:focus, select{
-        border:none;
+        border: none;
         outline: none;
         color: #ffffff;
     }
@@ -206,6 +240,10 @@
         display: flex;
         justify-content: center;
     }
+
+    .highlight{
+        border-color: #fff;
+    }
     
     #plus-btn{
         margin-top: 0.3rem;
@@ -232,6 +270,8 @@
         border-radius: 5px 0px 0px 0px;
         background: #282828;
         font-size: 16px;
+        border: solid  1px;
+        border-color: #282828;
     }
 
     #description-input{
@@ -240,7 +280,7 @@
         background: #282828;
         font-family:'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         margin-bottom: 1rem;
-        margin-top: -0.1rem;
+        margin-top: 0rem;
         padding-bottom: -0.5px;
     }
 
@@ -256,10 +296,11 @@
         font-size: 18px;
         height: 2.2rem;
         background: #282828;
-        border:none;
         color: #fff;
         margin-left: -0.1rem;
         cursor: pointer;
+        border-radius: 0rem 0.4rem 0.4rem 0rem;
+        border: solid #282828 1px;
     }
 
     #dollars-input{
@@ -297,7 +338,7 @@
 
     .item-header{
         padding-left: 0.5rem;
-        width: 15rem;
+        width: 14rem;
     }
 
     .item-name-date{
@@ -333,7 +374,8 @@
     }
 
     .item-price{
-        width: 3rem; 
+        text-align: center;
+        width: 4rem; 
         overflow: hidden;
         text-overflow: ellipsis;        
     }

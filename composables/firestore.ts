@@ -50,7 +50,15 @@ export async function getTrackerData(uid: string, errors:number) {
             });
     
             // Sort the array of month objects based on the month's value
-            itemsByMonth.sort((a, b) => months.indexOf(b.month) - months.indexOf(a.month));
+            itemsByMonth.sort((a, b) => {
+                if (a.year === b.year) {
+                    // If the years are the same, sort by the month
+                    return months.indexOf(b.month) - months.indexOf(a.month);
+                } else {
+                    // If the years are different, sort by the year
+                    return b.year.localeCompare(a.year);
+                }
+            });
     
         } catch (error) {
             console.error("Error fetching data from Firestore:", error);
@@ -97,7 +105,7 @@ export function createNewExpense(uid:string, name:string, description:string, pr
     updateData()
 }
 
-export async function changeExpenseDate(uid:String, docID:string, date:string, time:string){
+export async function changeExpenseDate(uid:any, docID:string, date:string, time:string){
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
     try{
