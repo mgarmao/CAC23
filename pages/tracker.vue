@@ -7,11 +7,11 @@
     </div>
 
     <div id="month-stats">
-        <div id="monthly-total" >Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
+        <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
     </div>
 
     <div id="input-section">
-        <div id="plus-btn" class="noSelect" @click="newExpense" >+</div>
+        <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
         <div id="text-input">
             <input id="name-input" placeholder="Name" v-model="inputName" :class="inputNameClass">
             <textarea id="description-input" placeholder="Description" v-model="inputDescription" :class="inputDescriptionClass"></textarea>
@@ -228,8 +228,6 @@
             thisMonthHasAnItem.value = true
         }
         getThisMonthsTotal()
-        console.log("items")
-        console.log(items.value)
     }
 
     function isDescriptionEmpty (des){

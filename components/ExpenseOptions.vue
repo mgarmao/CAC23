@@ -2,7 +2,7 @@
     <div class="modal-overlay" @click.self="handleClose" :class="{ 'fade-in': isOpen, 'fade-out':!isOpen}">
         <div class="modal-container" :class="{ 'slide-in': isOpen, 'slide-out':!isOpen}">
             <div>
-              <input type="date" id="date-input" v-model="date" @keypress="checkIfDateInput">
+              <input type="date" id="date-input" max="2023-07-21" v-model="date" @click="checkIfDateInput" @keypress="checkIfDateInput">
               <input type="time" id="time-input" v-model="time">
               <br>
               <button @click="handleDateChange" id="change-btn" :disabled="buttonDisabled">Change Date</button>
@@ -16,15 +16,28 @@
   import {changeExpenseDate} from '../composables/firestore.ts';
   const emit = defineEmits(['close','deletedItem','dateChange'])
   const props = defineProps(['UID','docID'])
-  const date = ref()
+  var today = new Date().toJSON().slice(0, 10)
+  const date = ref(today)
   const time = ref()
 
   const isOpen = ref(true)
   const buttonDisabled = ref(true)
 
+  function compareTwoDates(d1, d2) {
+    const date1 = new Date(d1);
+    const date2 = new Date(d2);
+    return date1 - date2;
+  }
+
   const checkIfDateInput = () =>{
-    if(date.value!=undefined){
+    const today = new Date()
+    const inputDate = new Date(date.value)
+
+    if((date.value!=undefined)&&(today>=inputDate)){
       buttonDisabled.value = false
+    }
+    else{
+      buttonDisabled.value = true
     }
   }
 
@@ -43,6 +56,10 @@
     emit('dateChange')
     changeExpenseDate(props.UID,props.docID,date.value,time.value)
   }
+
+  onMounted(()=>{
+    checkIfDateInput()
+  })
 </script>
 
 <style scoped>
