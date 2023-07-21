@@ -38,7 +38,7 @@
             <div  v-for="month in items[0]" :key="1">
                 <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div>
                 <div v-for="item in month.data" :key="item[1]">
-                    <div class="item" @click.stop="openExpense(item[0].Name,toDate(item[2]),item[0].Description,item[0].Category,item[0].Price)">
+                    <div class="item" @click.stop="openExpense(item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
                         <div class="item-header">
                             <div class="item-name-date">
                                 <div class="item-name">{{ item[0].Name }}</div>
@@ -51,20 +51,20 @@
                             <div class="item-price">${{ item[0].Price }}</div>
                             
                             <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1])"/>
-                            
-                            <div v-if="isModalOpen">
-                                <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
-                            </div>
                         </div>              
                     </div>
-                    <div v-if="isExpenseOpen">
-                        <Expense @close="closeExpense" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate"/>
-                    </div>  
+                    
                     <hr>
                     <br>    
                 </div>
             </div>
         </div>
+        <div v-if="isModalOpen">
+            <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
+        </div>
+        <div v-if="isExpenseOpen">
+            <Expense @close="closeExpense" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate"/>
+        </div>  
     </div>
     
 </template>
@@ -121,6 +121,7 @@
         targetDescription.value = description
         targetCategory.value = category
         targetPrice.value = price
+
 
         isExpenseOpen.value= true
     }

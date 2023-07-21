@@ -1,14 +1,14 @@
 <template>
-    <div id="modal-overlay" @click.self="handleClose">
-        <div id="modal-container" :class="{ 'slide-in': isOpen, 'slide-out':!isOpen}" v-show="isOpen">
+    <div id="modal-overlay" @click.self="handleClose" :class="{ 'fade-in':isOpen, 'fade-out': !isOpen}">
+        <div id="modal-container" :class="{ 'slide-in': isOpen, 'slide-out':!isOpen}">
             <div id="icons">
-                <img src="" alt="back" id="down-icon" @click.self="handleClose">
-                <img src="" alt="" id="more-icon">
+                <img src="../public/down-arrow.svg" alt="back" id="down-icon" @click.self="handleClose">
+                <img src="../public/more-icon.svg" alt="" id="more-icon">
             </div>
 
             <div id="name">{{ props.name }}</div>
             <div id="price">${{ props.price }}</div>
-            <div id="date-and-time">{{ props.dateAndTime }}</div>
+            <div id="date-and-time">{{formatDate(props.dateAndTime)}}</div>
             <div id="description">
                 <img id="description-icon"/>
                 <div id="description-text">{{ props.description }}</div>
@@ -24,10 +24,18 @@ const props = defineProps(["name","price","description","dateAndTime"])
 const isOpen = ref(true)
 
 
+const formatDate = (rawDate)=>{
+    let dayOfWeek = String(rawDate).substr(0,3) 
+    let month = String(rawDate).substr(3,4) 
+    // let month = String(rawDate).substr(3,4) 
+
+    return rawDate
+}
+
 const handleClose = () => {
     isOpen.value = false;
     // Optional: You can add a delay before emitting the close event if you want the slide-out animation to complete before removing the modal.
-    setTimeout(() => emit("close"), 500)
+    setTimeout(() => emit("close"), 290)
 }
 </script>
 
@@ -51,12 +59,18 @@ const handleClose = () => {
         max-width: 600px;
         background-color: #282828;
         padding: 20px;
-        border-radius: 1rem 1rem 0rem 0rem;
+        border-radius: 1.5rem 1.5rem 0rem 0rem;
         color:black;
         margin-top: auto;
         text-align: center;
 
         color:#fff;
+    }
+
+    #icons {
+        display: flex;
+        justify-content: space-between; /* This will push the images to the left and right edges of the container */
+        /* Add any styles you want for the container */
     }
 
     #name{
@@ -75,17 +89,41 @@ const handleClose = () => {
 
     #description-text{
         font-size: 20px;
-    }
+    } 
 
     div.slide-in {
-        animation: 0.5s slide-in;
+        animation: 0.3s slide-in;
     }
 
     div.slide-out {
-        animation: 0.5s slide-out;
+        animation: 0.3s slide-out;
     }
 
+    .fade-in{
+        animation: 0.3s fade-in;
+    }
 
+    .fade-out{
+        animation: 0.3s fade-out;
+    }
+
+    @keyframes fade-in{
+        from {
+            background-color: rgba(0, 0, 0, 0.0);
+        }
+        to {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    @keyframes fade-out {
+        from {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        to {
+            background-color: rgba(0, 0, 0, 0.0);
+        }
+    }
 
     @keyframes slide-in {
         from {
@@ -103,6 +141,5 @@ const handleClose = () => {
         to {
             transform: translateY(100%);
         }
-    }   
-
+    }  
 </style>
