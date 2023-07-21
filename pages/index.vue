@@ -12,7 +12,7 @@
         </div>
     </div> 
 
-    <div id="tabs-menu">
+    <div id="tabs-menu" class="noSelect">
 
         <NuxtLink to="/tracker">
             <div class="tab">
@@ -87,16 +87,36 @@
         background: linear-gradient(180deg, rgba(187, 134, 252, 0.00) 0%, #2A404B 16.67%, rgba(64, 64, 64, 0.00) 100%);
         padding: 10px;
     }
-    
+
     #profile-btn{
         margin-left: auto;
     }
-
+    
     #profile-icon{
         width: 30px;
         height: 33.333px;
     }
 
+    a{
+        text-decoration: none;
+    }
+
+    .noSelect {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    .noSelect:focus {
+        outline: none !important;
+    }
+
+</style>
+
+<style scoped>
     #monthly-statement{
         font-size: 20px;
     }
@@ -194,9 +214,4 @@
     #headline{
         margin-left: 0.5rem;
     }
-
-    a{
-        text-decoration: none;
-    }
-
 </style>

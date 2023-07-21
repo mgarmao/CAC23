@@ -1,6 +1,6 @@
 <template>
-    <div class="modal-overlay" @click.self="handleChange">
-        <div class="modal-container">
+    <div class="modal-overlay" @click.self="handleClose" :class="{ 'fade-in': isOpen, 'fade-out':!isOpen}">
+        <div class="modal-container" :class="{ 'slide-in': isOpen, 'slide-out':!isOpen}">
             <div>
               <input type="date" id="date-input" v-model="date" @keypress="checkIfDateInput">
               <input type="time" id="time-input" v-model="time">
@@ -18,6 +18,8 @@
   const props = defineProps(['UID','docID'])
   const date = ref()
   const time = ref()
+
+  const isOpen = ref(true)
   const buttonDisabled = ref(true)
 
   const checkIfDateInput = () =>{
@@ -26,8 +28,9 @@
     }
   }
 
-  const handleChange = () => {
-    emit('close')
+  const handleClose = () => {
+    isOpen.value = false;
+    setTimeout(() => emit("close"), 90)
   }
 
   const handleDelete = ()=>{
@@ -167,6 +170,62 @@
     background-repeat: no-repeat; /* Prevent icon repetition */
     color: transparent; /* Hide default arrow icon */
     padding-right: 5px;
+  }
+
+  div.slide-in {
+    animation: 0.1s slide-in;
+  }
+
+  div.slide-out {
+    animation: 0.1s slide-out;
+  }
+
+  @keyframes slide-in {
+    from {
+      padding: 0px;
+      opacity: 0.2;
+    }
+    to {
+      padding: 20px;
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-out {
+    from {
+      padding: 20px;
+      opacity: 1;      
+    }
+    to {
+      padding: 0px;
+      opacity: 0.2;
+    }
+  }
+
+  .fade-in{
+    animation: 0.2s fade-in;
+  }
+
+  .fade-out{
+    animation: 0.2s fade-out;
+  }
+
+  @keyframes fade-in{
+    from {
+      background-color: rgba(0, 0, 0, 0.0);
+    }
+    to {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    to {
+      background-color: rgba(0, 0, 0, 0.0);
+    }
   }
 
   </style>

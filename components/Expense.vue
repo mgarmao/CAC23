@@ -3,40 +3,71 @@
         <div id="modal-container" :class="{ 'slide-in': isOpen, 'slide-out':!isOpen}">
             <div id="icons">
                 <img src="../public/down-arrow.svg" alt="back" id="down-icon" @click.self="handleClose">
-                <img src="../public/more-icon.svg" alt="" id="more-icon">
+                <img src="../public/more-icon.svg" alt="" id="more-icon" @click="isModalOpen=true">
             </div>
 
             <div id="name">{{ props.name }}</div>
             <div id="price">${{ props.price }}</div>
             <div id="date-and-time">{{formatDate(props.dateAndTime)}}</div>
             <div id="description">
-                <img id="description-icon"/>
+                <img src="../public/shifted-bars.svg" id="description-icon" v-if="props.description!=''"/>
                 <div id="description-text">{{ props.description }}</div>
             </div>
         </div>
     </div>
+    <div v-if="isModalOpen">
+        <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="props.docID" :UID="props.UID"/>
+    </div>
 </template>
 
 <script setup>
-const emit = defineEmits(["close"])
-const props = defineProps(["name","price","description","dateAndTime"])
+    const emit = defineEmits(["close","getData"])
+    const props = defineProps(["name","price","description","dateAndTime","docID","UID"])
 
-const isOpen = ref(true)
+    const isOpen = ref(true)
 
+    const isModalOpen = ref(false)
 
-const formatDate = (rawDate)=>{
-    let dayOfWeek = String(rawDate).substr(0,3) 
-    let month = String(rawDate).substr(3,4) 
-    // let month = String(rawDate).substr(3,4) 
+    const formatDate = (rawDate)=>{
+        let dayOfWeek = String(rawDate).substr(0,3) 
+        let month = String(rawDate).substr(4,3) 
+        let day = String(rawDate).substr(8,2)
+        let year = String(rawDate).substr(11,4)
+        let fullTime = String(rawDate).substr(16,5)
+        let hour = String(rawDate).substr(16,2)
+        let minute = String(rawDate).substr(19,2)
+        let meridiem = ""
 
-    return rawDate
-}
+        if(parseInt(hour)<10){
+            fullTime = String(rawDate).substr(17,7)
+            
+        }
+        if(parseInt(hour)<12){
+            meridiem = "am"
+        }
+        else{
+            hour = parseInt(hour)-12
+            meridiem = "pm"
+        }
+        
 
-const handleClose = () => {
-    isOpen.value = false;
-    // Optional: You can add a delay before emitting the close event if you want the slide-out animation to complete before removing the modal.
-    setTimeout(() => emit("close"), 290)
-}
+        return month+" "+day+" "+year+" @"+hour+":"+minute+meridiem
+    }
+
+   
+
+    const handleClose = () => {
+        isOpen.value = false;
+        setTimeout(() => emit("close"), 290)
+    }
+
+    const closeModal=()=>{
+        isModalOpen.value= false
+    }
+
+    const getDataDelayed = ()=>{
+        setTimeout(() => { emit("getData") }, 200);
+    }
 </script>
 
 <style scoped>
@@ -68,12 +99,14 @@ const handleClose = () => {
     }
 
     #icons {
+        margin-top: -0.3rem;
         display: flex;
         justify-content: space-between; /* This will push the images to the left and right edges of the container */
         /* Add any styles you want for the container */
     }
 
     #name{
+        margin-top: 0.2rem;
         font-size: 30px;
     }
     
@@ -87,7 +120,19 @@ const handleClose = () => {
         margin-top: 0.7rem;
     }
 
+    #description{
+        display: flex;
+        align-items: center; 
+        margin-top: 1rem;   
+    }
+
+    #description-icon{
+        margin-right: 1rem;
+        display: inline-block;
+    }
+
     #description-text{
+        display: inline-block;
         font-size: 20px;
     } 
 

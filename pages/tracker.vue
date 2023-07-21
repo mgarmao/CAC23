@@ -1,6 +1,6 @@
 <template>
     <div id="header">
-        <div id="back-btn"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
+        <div id="back-btn" class="noSelect"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
         <div id="this-month">This Month</div>
         <div id="month">{{month}}</div>
         <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
@@ -11,12 +11,12 @@
     </div>
 
     <div id="input-section">
-        <div id="plus-btn" @click="newExpense" >+</div>
+        <div id="plus-btn" class="noSelect" @click="newExpense" >+</div>
         <div id="text-input">
             <input id="name-input" placeholder="Name" v-model="inputName" :class="inputNameClass">
             <textarea id="description-input" placeholder="Description" v-model="inputDescription" :class="inputDescriptionClass"></textarea>
         </div>
-        <div id="category-input">
+        <div id="category-input" class="noSelect">
             <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="inputCategoryClass">
                 <option value="" disabled selected >Category</option>
                 <option value="Food">Food</option>
@@ -38,8 +38,9 @@
             <div  v-for="month in items[0]" :key="1">
                 <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div>
                 <div v-for="item in month.data" :key="item[1]">
-                    <div class="item" @click.stop="openExpense(item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
-                        <div class="item-header">
+                    {{updateExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)}}
+                    <div class="item noSelect" @click.stop="openExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
+                        <div :class="{'item-header':true, 'shrink': isDescriptionEmpty(item[0].Description) }" >
                             <div class="item-name-date">
                                 <div class="item-name">{{ item[0].Name }}</div>
                                 <div class="item-date">{{ toDate(item[2]) }}</div>
@@ -49,11 +50,10 @@
                         <div class="item-details">
                             <div class="item-category">{{ item[0].Category }}</div>
                             <div class="item-price">${{ item[0].Price }}</div>
-                            
+            
                             <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1])"/>
                         </div>              
                     </div>
-                    
                     <hr>
                     <br>    
                 </div>
@@ -63,7 +63,7 @@
             <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
         </div>
         <div v-if="isExpenseOpen">
-            <Expense @close="closeExpense" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate"/>
+            <Expense @close="closeExpense" @getData="getDataDelayed" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate" :docID="targetExpenseID" :UID="uid"/>
         </div>  
     </div>
     
@@ -90,6 +90,7 @@
 
     const thisMonthHasAnItem = ref(false)
 
+    const targetDocID = ref("")
     const targetName = ref("")
     const targetDate = ref("")
     const targetDescription = ref("")
@@ -115,13 +116,13 @@
         isModalOpen.value = false;
     }
 
-    const openExpense = (name,date,description,category,price)=>{
+    const openExpense = (docID,name,date,description,category,price)=>{
+        targetDocID.value = docID
         targetName.value = name
         targetDate.value = date
         targetDescription.value = description
         targetCategory.value = category
         targetPrice.value = price
-
 
         isExpenseOpen.value= true
     }
@@ -129,6 +130,18 @@
     const closeExpense=()=>{
         isExpenseOpen.value= false
     }
+    
+    
+    function updateExpense(docID,name,date,description,category,price){
+        if(docID==targetDocID.value){
+            targetName.value = name
+            targetDate.value = date
+            targetDescription.value = description
+            targetCategory.value = category
+            targetPrice.value = price
+        }
+    }
+    
 
     function toDate(rawDate){
         let outputDate = ""
@@ -215,7 +228,17 @@
             thisMonthHasAnItem.value = true
         }
         getThisMonthsTotal()
+        console.log("items")
         console.log(items.value)
+    }
+
+    function isDescriptionEmpty (des){
+        if(des==""){
+            return true
+        }
+        else{
+            return false
+        }
     }
 
     onMounted(async () => {
@@ -360,11 +383,18 @@
         grid-template-columns: 1fr 1fr;
         grid-gap: 1rem;
         font-size: 15px;
+        border-radius: 0.4rem;
+        cursor: pointer;
     }
 
     .item-header{
         padding-left: 0.5rem;
         width: 14rem;
+    }
+
+    .shrink{
+        height: 24px;
+        margin-top: 20px;
     }
 
     .item-name-date{
