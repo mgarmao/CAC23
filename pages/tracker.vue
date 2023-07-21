@@ -38,27 +38,30 @@
             <div  v-for="month in items[0]" :key="1">
                 <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div>
                 <div v-for="item in month.data" :key="item[1]">
-                    <div class="item">
+                    <div class="item" @click.stop="openExpense(item[0].Name,toDate(item[2]),item[0].Description,item[0].Category,item[0].Price)">
                         <div class="item-header">
                             <div class="item-name-date">
                                 <div class="item-name">{{ item[0].Name }}</div>
                                 <div class="item-date">{{ toDate(item[2]) }}</div>
                             </div>
-                            <div class="item-description">{{ item[0].Description }}</div>
+                            <div class="item-description" v-if="item[0].Description!=''">{{ item[0].Description }}</div>
                         </div>
-                    <div class="item-details">
-                        <div class="item-category">{{ item[0].Category }}</div>
-                        <div class="item-price">${{ item[0].Price }}</div>
-                        
-                        <img src="../public/more-icon.svg" alt="..." class="item-options" @click="openModal(item[1])"/>
-                        
-                        <div v-if="isModalOpen">
-                            <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
-                        </div>
-                    </div>                
-                </div>
-                <hr>
-                <br>    
+                        <div class="item-details">
+                            <div class="item-category">{{ item[0].Category }}</div>
+                            <div class="item-price">${{ item[0].Price }}</div>
+                            
+                            <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1])"/>
+                            
+                            <div v-if="isModalOpen">
+                                <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
+                            </div>
+                        </div>              
+                    </div>
+                    <div v-if="isExpenseOpen">
+                        <Expense @close="closeExpense" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate"/>
+                    </div>  
+                    <hr>
+                    <br>    
                 </div>
             </div>
         </div>
@@ -81,9 +84,17 @@
     const inputPrice = ref("")
 
     const isModalOpen = ref(false)
+    const isExpenseOpen = ref(false)
+
     const targetExpenseID = ref()
 
     const thisMonthHasAnItem = ref(false)
+
+    const targetName = ref("")
+    const targetDate = ref("")
+    const targetDescription = ref("")
+    const targetCategory = ref("")
+    const targetPrice = ref("")
 
     const inputNameClass = ref("")
     const inputDescriptionClass = ref("")
@@ -102,6 +113,20 @@
 
     const closeModal = ()=>{
         isModalOpen.value = false;
+    }
+
+    const openExpense = (name,date,description,category,price)=>{
+        targetName.value = name
+        targetDate.value = date
+        targetDescription.value = description
+        targetCategory.value = category
+        targetPrice.value = price
+
+        isExpenseOpen.value= true
+    }
+
+    const closeExpense=()=>{
+        isExpenseOpen.value= false
     }
 
     function toDate(rawDate){
