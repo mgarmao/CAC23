@@ -51,7 +51,7 @@
                             <div class="item-details">                            
                                 <div class="item-category">{{ item[0].Category }}</div>
                                 <div class="item-price">${{ item[0].Price }}</div>
-                                <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1])"/>
+                                <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1],item[2])"/>
                             </div>  
                         </div>            
                     </div>
@@ -62,7 +62,7 @@
         </div>
         <div v-if="noItems" id="no-items-message"> You Dont Have Any Purchases Yet</div>
         <div v-if="isModalOpen">
-            <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
+            <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
         </div>
         <div v-if="isExpenseOpen">
             <Expense @close="closeExpense" @getData="getDataDelayed" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate" :docID="targetExpenseID" :UID="uid"/>
@@ -89,6 +89,7 @@
     const isExpenseOpen = ref(false)
 
     const targetExpenseID = ref()
+    const targetExpenseDate = ref()
 
     const thisMonthHasAnItem = ref(false)
 
@@ -108,8 +109,9 @@
     const month = ref(months[d.getMonth()]); 
     const currentMonth = ref(month.value.substring(0,3))
     
-    const openModal = (docID)=>{
+    const openModal = (docID,date)=>{
         isModalOpen.value = true;
+        targetExpenseDate.value = date
         targetExpenseID.value = docID
     }
 
@@ -453,7 +455,8 @@
         margin-left: auto;
         margin-top: -0.3rem;
         cursor: pointer;
-        margin-right: 0.1rem;
+        margin-right: 0.4rem;
+        padding-left: 0.7rem;
     }
 
     .item-details{
