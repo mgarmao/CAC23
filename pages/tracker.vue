@@ -41,20 +41,19 @@
                 <div v-for="item in month.data" :key="item[1]">
                     {{updateExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)}}
                     <div class="item noSelect" @click.stop="openExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
-                        <div :class="{'item-header':true, 'shrink': isDescriptionEmpty(item[0].Description) }" >
-                            <div class="item-name-date">
-                                <div class="item-name">{{ item[0].Name }}</div>
-                                <div class="item-date">{{ toDate(item[2]) }}</div>
-                            </div>
+                        <div :class="{'item-header':true, 'shrink': isDescriptionEmpty(item[0].Description)}" >
+                            <div class="item-name" >{{ item[0].Name }}</div>
+                            <div class="item-date">{{ toDate(item[2]) }}</div>
                         </div>
-
-                        <div class="item-details">
-                            <div class="item-description">{{ item[0].Description }}</div>
-                            <div class="item-category">{{ item[0].Category }}</div>
-                            <div class="item-price">${{ item[0].Price }}</div>
-            
-                            <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1])"/>
-                        </div>              
+                        <br v-if="!isDescriptionEmpty(item[0].Description)">
+                        <div class="container">
+                            <div class="item-description" >{{ item[0].Description }}</div>
+                            <div class="item-details">                            
+                                <div class="item-category">{{ item[0].Category }}</div>
+                                <div class="item-price">${{ item[0].Price }}</div>
+                                <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1])"/>
+                            </div>  
+                        </div>            
                     </div>
                     <hr>
                     <br>    
@@ -246,6 +245,11 @@
 </script>
 
 <style scoped>
+
+    .container{
+        display: flex;
+    }
+
     input, textarea, input:focus, textarea:focus, select{
         outline: none;
         color: #ffffff;
@@ -387,83 +391,62 @@
         font-size: 19px;
     }
     .item{
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-gap: 0.2rem;
-        font-size: 15px;
-        border-radius: 0.4rem;
         cursor: pointer;
     }
 
     .item-header{
-        padding-left: 0.5rem;
-        width: 11rem;
-    }
-
-    .shrink{
-        height: 24px;
-        margin-top: 25px;
-        width: 100%;
-    }
-
-    .item-name-date{
         display: flex;
+        width: 13rem;
+        margin-bottom: -0.8rem;
+    }
+    .shrink{
+        width: 13rem;
+        margin-bottom: -1.15rem;
     }
 
     .item-date{
-        padding-left: 0.7rem;
-        width: 25%;
-        margin-top: 0.1rem;
-        min-width: 3rem;
-    }
+        margin-left: 1rem;
+        font-size: 14px;
+    }   
 
     .item-name{
-        font-size: 18px;
-        padding-bottom: 0.2rem;
-        max-width: 10rem; 
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        max-width:8rem;
+        font-size: 18px;
     }
 
     .item-description{
-        font-size: 16px;        
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        width: 12rem;
+        font-size: 15px;
     }
 
     .item-category{
         text-align: center;
-        width: 3rem;
-        margin-left: 0.1rem;
+        margin-right: -2rem;
     }
 
     .item-price{
         text-align: center;
-        width: 5rem; 
-        overflow: hidden;
-        text-overflow: ellipsis;   
+        margin-right: -3rem;
     }
 
     .item-options{
-        width: 0.5rem;
-        margin-top: -0.2rem;
-        margin-right: 0.5rem;
         margin-left: auto;
+        margin-top: -0.3rem;
         cursor: pointer;
     }
 
     .item-details{
+        flex: 1;
         display: grid;
-        grid-template-columns: 30fr 1fr 1fr 1fr;
-        grid-gap: 7px;
-        height: 1rem;
-        font-size: 18px;
-
-        margin-top: 0.2rem;
-        margin-left: -11.3rem;
-        padding-top: 1.4rem;
+        grid-template-columns:  1fr 1fr 1fr; 
+        grid-gap: 10px;
+        margin-bottom: 0rem;
     }
 
     #no-items-message{
