@@ -46,9 +46,10 @@
                                 <div class="item-name">{{ item[0].Name }}</div>
                                 <div class="item-date">{{ toDate(item[2]) }}</div>
                             </div>
-                            <div class="item-description" v-if="item[0].Description!=''">{{ item[0].Description }}</div>
                         </div>
+
                         <div class="item-details">
+                            <div class="item-description">{{ item[0].Description }}</div>
                             <div class="item-category">{{ item[0].Category }}</div>
                             <div class="item-price">${{ item[0].Price }}</div>
             
@@ -170,6 +171,7 @@
         if((inputName.value != "")&&(inputPrice.value!="")&&(chosenCategory.value!="")){
             await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
             inputName.value = ""
+            inputDescription.value = ""
             inputPrice.value = ""
             chosenCategory.value = "Category"
             setTimeout(() => { getData() }, 500);
@@ -400,7 +402,8 @@
 
     .shrink{
         height: 24px;
-        margin-top: 20px;
+        margin-top: 25px;
+        width: 100%;
     }
 
     .item-name-date{
@@ -410,14 +413,13 @@
     .item-date{
         padding-left: 0.7rem;
         width: 25%;
-        margin-top: 0.25rem;
+        margin-top: 0.1rem;
         min-width: 3rem;
     }
 
     .item-name{
         font-size: 18px;
         padding-bottom: 0.2rem;
-        width: 75%;
         max-width: 10rem; 
         white-space: nowrap;
         overflow: hidden;
@@ -425,7 +427,7 @@
     }
 
     .item-description{
-        max-width: 15rem; 
+        font-size: 16px;        
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -434,7 +436,7 @@
     .item-category{
         text-align: center;
         width: 3rem;
-        margin-left: 1rem;
+        margin-left: 0.1rem;
     }
 
     .item-price{
@@ -454,12 +456,14 @@
 
     .item-details{
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-gap: 10px;
+        grid-template-columns: 30fr 1fr 1fr 1fr;
+        grid-gap: 7px;
         height: 1rem;
-        
-        padding-top: 1.4rem;
         font-size: 18px;
+
+        margin-top: 0.2rem;
+        margin-left: -11.3rem;
+        padding-top: 1.4rem;
     }
 
     #no-items-message{
