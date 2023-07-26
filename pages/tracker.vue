@@ -305,7 +305,6 @@
     }
 
     #name-input{
-        width: 100%;
         min-height: 30px;
         border-radius: 5px 0px 0px 0px;
         background: #282828;
