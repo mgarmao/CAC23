@@ -71,6 +71,7 @@
 </script>
 
 <style scoped>
+
     #modal-overlay {
         position: fixed;
         top: 0;
@@ -101,8 +102,15 @@
     #icons {
         margin-top: -0.3rem;
         display: flex;
-        justify-content: space-between; /* This will push the images to the left and right edges of the container */
-        /* Add any styles you want for the container */
+        justify-content: space-between; 
+    }
+
+    #down-icon{
+        cursor: pointer;
+    }
+
+    #more-icon{
+        cursor: pointer;
     }
 
     #name{

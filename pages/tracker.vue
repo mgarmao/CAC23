@@ -41,9 +41,9 @@
                 <div v-for="item in month.data" :key="item[1]">
                     {{updateExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)}}
                     <div class="item noSelect" @click.stop="openExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
+                        <div class="item-date">{{ toDate(item[2]) }}</div>
                         <div :class="{'item-header':true, 'shrink': isDescriptionEmpty(item[0].Description)}" >
-                            <div class="item-name" >{{ item[0].Name }}</div>
-                            <div class="item-date">{{ toDate(item[2]) }}</div>
+                            <div :class="{'item-name':!isDescriptionEmpty(item[0].Description),'item-name-shrink':isDescriptionEmpty(item[0].Description)}" >{{ item[0].Name }}</div>
                         </div>
                         <br v-if="!isDescriptionEmpty(item[0].Description)">
                         <div class="container">
@@ -396,28 +396,41 @@
 
     .item-header{
         display: flex;
-        width: 13rem;
+        width: 18rem;
         margin-bottom: -0.8rem;
     }
     .shrink{
         width: 13rem;
-        margin-bottom: -1.2rem;
+        margin-bottom: -1.3rem;
     }
-
-    .item-date{
-        margin-left: 1rem;
-        font-size: 14px;
-        margin-top: 0.1rem;
-    }   
 
     .item-name{
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width:8rem;
+        max-width:12rem;
         font-size: 18px;
     }
 
+    .item-name-shrink{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: -0.2rem;
+        max-width: 9rem;
+        font-size: 18px;
+    }
+    
+
+    .item-date{
+        color: #ffffffca;
+        margin-left: 0.05rem;
+        margin-bottom: 0.2rem;
+        font-size: 14px;
+        margin-top: 0.1rem;
+    }   
+
+    
     .item-description{
         white-space: nowrap;
         overflow: hidden;
