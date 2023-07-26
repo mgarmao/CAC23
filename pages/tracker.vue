@@ -309,7 +309,7 @@
     #text-input{
         display: flex;
         flex-direction: column;
-        width: 60%;
+        width: 50%;
     }
 
     #name-input{
@@ -334,7 +334,7 @@
     #category-price-input{
         display: flex;
         flex-direction: column;
-        width: 25%;
+        width: 28%;
         margin-top: -0.14rem;
     }
 
@@ -447,7 +447,7 @@
     .item-options{
         width: 0.5rem;
         margin-top: -0.2rem;
-        margin-right: 0.2rem;
+        margin-right: 0.5rem;
         margin-left: auto;
         cursor: pointer;
     }
