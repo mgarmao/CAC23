@@ -13,11 +13,11 @@
     <div id="input-section">
         <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
         <div id="text-input">
-            <input id="name-input" placeholder="Name" v-model="inputName" :class="inputNameClass">
+            <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
             <textarea id="description-input" placeholder="Description" v-model="inputDescription" :class="inputDescriptionClass"></textarea>
         </div>
         <div id="category-input" class="noSelect">
-            <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="inputCategoryClass">
+            <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false">
                 <option value="" disabled selected >Category</option>
                 <option value="Food">Food</option>
                 <option value="Travel">Travel</option>
@@ -26,7 +26,7 @@
             </select>
         </div>
         <div >
-            <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="inputPriceClass" type="number">
+            <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
         </div>        
     </div>
 
@@ -97,10 +97,9 @@
     const targetCategory = ref("")
     const targetPrice = ref("")
 
-    const inputNameClass = ref("")
-    const inputDescriptionClass = ref("")
-    const inputCategoryClass = ref("")
-    const inputPriceClass = ref("")
+    const highlightInputName = ref(false)
+    const highlightCategory = ref(false)
+    const highlightPrice = ref(false)
 
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const d = new Date();
@@ -170,33 +169,25 @@
             await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
             inputName.value = ""
             inputPrice.value = ""
-            inputCategoryClass.value = "Category"
+            chosenCategory.value = "Category"
 
             setTimeout(() => { getData() }, 500);
         }
         else{
             if(inputName.value ==""){
-                inputNameClass.value = "highlight"
-            }
-            else{
-                inputNameClass.value = ""
+                highlightInputName.value = true
             }
 
             if(inputPrice.value==""){
-                inputPriceClass.value = "highlight"
-            }
-            else{
-                inputPriceClass.value = ""
+                highlightPrice.value = true
             }
 
-            if(chosenCategory.value==""){
-                inputCategoryClass.value= "highlight"
-            }
-            else{
-                inputCategoryClass.value= ""
+            if(chosenCategory.value==""||chosenCategory.value=="Category"){
+                highlightCategory.value= true
             }
         }
     }
+
 
     const getThisMonthsTotal = ()=>{
         if(items.value[0][0]!=undefined){
@@ -246,9 +237,9 @@
 
 <style scoped>
     input, textarea, input:focus, textarea:focus, select{
-        border: none;
         outline: none;
         color: #ffffff;
+        border: solid 1px #282828;
     }
 
     hr{
@@ -293,13 +284,13 @@
     }
     
     #plus-btn{
-        margin-top: 0.3rem;
-        margin-right: 0.8rem;
+        margin-top: 1rem;
+        margin-right: 0.6rem;
         background-color: #7997FF;
         margin-bottom: 3rem;
-        padding: 15px;
-        padding-top: 7px;
-        padding-bottom: 8px;
+        padding: 11px;
+        padding-top: 3px;
+        padding-bottom: 3px;
         border-radius: 50%;
 
         font-size: 30px;
@@ -310,15 +301,15 @@
     #text-input{
         display: flex;
         flex-direction: column;
+        width: 80%;
     }
 
     #name-input{
+        width: 100%;
         min-height: 30px;
         border-radius: 5px 0px 0px 0px;
         background: #282828;
         font-size: 16px;
-        border: solid  1px;
-        border-color: #282828;
     }
 
     #description-input{
@@ -329,6 +320,8 @@
         margin-bottom: 1rem;
         margin-top: 0rem;
         padding-bottom: -0.5px;
+        border: solid  1px;
+        border-color: #282828;
     }
 
     input#name-input{
@@ -340,14 +333,12 @@
     }
 
     #category-selector{
-        font-size: 18px;
+        font-size: 16px;
         height: 2.2rem;
         background: #282828;
         color: #fff;
-        margin-left: -0.1rem;
         cursor: pointer;
         border-radius: 0rem 0.4rem 0.4rem 0rem;
-        border: solid #282828 1px;
     }
 
     #dollars-input{
