@@ -16,7 +16,7 @@
         </div>
     </div>
     <div v-if="isModalOpen">
-        <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="props.docID" :UID="props.UID"/>
+        <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="props.docID" :UID="props.UID" :itemDate="props.dateAndTime"/>
     </div>
 </template>
 
