@@ -357,6 +357,10 @@
         text-align: center;
     }
 
+    #dollars-input::placeholder{
+        color: #2a2a2ad1;
+    }
+
     #expense{
         color: white;
     }
