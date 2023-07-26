@@ -15,19 +15,16 @@
 <script setup>
   import {changeExpenseDate} from '../composables/firestore.ts';
   const emit = defineEmits(['close','deletedItem','dateChange'])
-  const props = defineProps(['UID','docID'])
-  var today = new Date().toJSON().slice(0, 10)
-  const date = ref(today)
-  const time = ref()
+  const props = defineProps(['UID','docID','itemDate'])
+  const newDate = new Date(props.itemDate-1).toJSON().slice(0, 10)
+  const newTime = String(props.itemDate).substring(16,24)
+  console.log(props.itemDate)
+  
+  const date = ref(newDate)
+  const time = ref(newTime)
 
   const isOpen = ref(true)
   const buttonDisabled = ref(true)
-
-  function compareTwoDates(d1, d2) {
-    const date1 = new Date(d1);
-    const date2 = new Date(d2);
-    return date1 - date2;
-  }
 
   const checkIfDateInput = () =>{
     const today = new Date()
