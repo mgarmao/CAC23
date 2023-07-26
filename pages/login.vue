@@ -27,8 +27,8 @@
 
 <style scoped> 
 
-h1{
-        color: red;
+    h1{
+        color: #fff;
         font-family: Arial, Helvetica, sans-serif;
     }
 
