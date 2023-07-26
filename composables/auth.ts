@@ -20,6 +20,7 @@ export function createNewUser (email:string, password:string) {
       const uid = userCredential.user.uid
       await setDoc(doc(db, "users", uid), {
         email: email,
+        uid: uid,
         displayName: displayName,
         expenseTracker: []
       });

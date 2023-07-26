@@ -440,6 +440,7 @@
         margin-left: auto;
         margin-top: -0.3rem;
         cursor: pointer;
+        margin-right: 0.1rem;
     }
 
     .item-details{
