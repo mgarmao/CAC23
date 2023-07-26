@@ -436,6 +436,7 @@
     .item-options{
         width: 0.5rem;
         margin-top: -0.2rem;
+        margin-right: 0.2rem;
         margin-left: auto;
         cursor: pointer;
     }
