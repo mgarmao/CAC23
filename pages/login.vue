@@ -17,10 +17,10 @@
 </script>
 
 <style scoped>
-    body{
+    /* body{
         transition: all ease 0.5s;
         background-color: #121212;
-    }
+    } */
     h1{
         color: #fff;
         font-family: Arial, Helvetica, sans-serif;
