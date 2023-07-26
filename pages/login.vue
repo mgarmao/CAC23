@@ -7,7 +7,6 @@
         <button @click="login(email,password)" id="email-login-button">Login</button>
         <br>
         <button id="login-google" @click="loginWithGoogle"><img src="../public/google-logo.svg"><p>Login With Google</p></button>
-        <button @click="signOutUser">Log out</button>
     </div>
 </template>
 
@@ -18,6 +17,10 @@
 </script>
 
 <style scoped>
+    body{
+        transition: all ease 0.5s;
+        background-color: #121212;
+    }
 
     #logins {
         margin-top: 50%;
