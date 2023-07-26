@@ -401,12 +401,13 @@
     }
     .shrink{
         width: 13rem;
-        margin-bottom: -1.15rem;
+        margin-bottom: -1.2rem;
     }
 
     .item-date{
         margin-left: 1rem;
         font-size: 14px;
+        margin-top: 0.1rem;
     }   
 
     .item-name{
