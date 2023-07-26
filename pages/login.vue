@@ -7,7 +7,7 @@
         <button @click="login(email,password)" id="email-login-button">Login</button>
         <br>
         <button id="login-google" @click="loginWithGoogle"><img src="../public/google-logo.svg"><p>Login With Google</p></button>
-        <!-- <button @click="signOutUser">Log out</button> -->
+        <button @click="signOutUser">Log out</button>
     </div>
 </template>
 
