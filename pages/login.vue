@@ -16,7 +16,7 @@
 
 </script>
 
-<style scoped>
+<style>
     body{
         transition: all ease 0.5s;
         background-color: #121212;
