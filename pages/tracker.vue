@@ -301,7 +301,7 @@
     #text-input{
         display: flex;
         flex-direction: column;
-        width: 80%;
+        width: 60%;
     }
 
     #name-input{
