@@ -410,7 +410,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width:12rem;
+        max-width:15rem;
         font-size: 18px;
     }
 
@@ -419,7 +419,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         margin-right: -0.2rem;
-        max-width: 9rem;
+        max-width: 12.5rem;
         font-size: 18px;
     }
     

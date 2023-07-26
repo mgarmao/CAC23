@@ -18,7 +18,6 @@
   const props = defineProps(['UID','docID','itemDate'])
   const newDate = new Date(props.itemDate-1).toJSON().slice(0, 10)
   const newTime = String(props.itemDate).substring(16,24)
-  console.log(props.itemDate)
   
   const date = ref(newDate)
   const time = ref(newTime)
