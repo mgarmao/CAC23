@@ -1,19 +1,24 @@
-<template>
-    <div id="logins">
-        <h1 id="title">Log in</h1>
-        <input v-model="email" type="email" placeholder="Email">
-        <input v-model="password" type="password" placeholder="Password">
-        <br>
-        <button @click="loginEmail" id="email-login-button">Login</button>
-        <br>
-        <button id="login-google" @click="loginGoogle"><img src="../public/google-logo.svg"><p>Login With Google</p></button>
-        <button @click="signOutUser">LOG OUT</button>
+<template >
+    <div id="sign-in">
+        <h1 id="title">Sign up</h1>
+        <input v-model="email" placeholder="Email">
+        <input v-model="password" placeholder="Password">
+        <button id="create-button" @click="createUser">Create Account</button>
+        <button id="login-google" @click="loginGoogle"><img src="../public/google-logo.svg"><p>Continue With Google</p></button>
     </div>
 </template>
 
 <script setup>
     const email = ref("")
     const password = ref("")
+
+    const createUser=async ()=>{
+        const result = await createNewUser(email.value,password.value)
+        console.log(result)
+        if(result==true){
+            await navigateTo('/')
+        }
+    }
 
     const loginGoogle= async()=>{
         const result = await loginWithGoogle()
@@ -22,19 +27,12 @@
         }   
     }
 
-    const loginEmail = async()=>{
-        const result = await loginWithEmail(email.value, password.value)
-        if(result==true){
+    onBeforeMount(async()=>{
+        const isSignedIn = await isUserSignedIn()
+        if(isSignedIn){
             await navigateTo('/')
-        }      
-    }
-
-    // onBeforeMount(async()=>{
-    //     const isSignedIn = await isUserSignedIn()
-    //     if(isSignedIn){
-    //         await navigateTo('/')
-    //     }
-    // })
+        }
+    })
 </script>
 
 <style>
@@ -53,7 +51,8 @@
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    #logins {
+    #sign-in {
+        margin-top: 50%;
         text-align: center;
         align-items: center;
         display: flex; 
@@ -72,19 +71,20 @@
         padding: 0.5rem;
     }
 
-    #email-login-button{
+    #create-button{
         font-size: 18px;
         background: #c392ff;  
         border: none;
         border-radius: 0.5rem;
         width: 50%;
+        margin-top: 0.5rem;
         padding: 0.3rem;
         cursor: pointer;
         transition: ease 0.3s;
         color: #000000;
     }
 
-    #email-login-button:hover{
+    #create-button:hover{
         background: #c392fece;  
         transition: ease 0.3s;
     }

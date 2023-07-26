@@ -10,8 +10,9 @@ export function createNewUser (email:string, password:string) {
   const auth:any = $auth
   const db:any = $firestore
 
-  createUserWithEmailAndPassword(auth, email, password)
-  .then( async(userCredential) => {
+  return new Promise((resolve,reject)=>{
+    createUserWithEmailAndPassword(auth, email, password)
+    .then( async(userCredential) => {
       // Signed in 
       const user = userCredential.user;
       const email = userCredential.user.email
@@ -22,45 +23,59 @@ export function createNewUser (email:string, password:string) {
         displayName: displayName,
         expenseTracker: []
       });
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorMessage)
-  });
-}
-
-export async function login(email:string,password:string) {
-    const { $auth } = useNuxtApp()
-    const auth:any = $auth
-
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        console.log("login")
-        const user = userCredential.user;
-        // ...
+      resolve(true)
     })
     .catch((error) => {
-        console.log("login error")
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorMessage)
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorMessage)
+      reject(error)
     });
+  })
+  
+}
+
+export async function loginWithEmail(email:string,password:string) {
+  const { $auth } = useNuxtApp()
+  const auth:any = $auth
+
+  return new Promise((resolve, reject)=>{
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      if(user){
+        resolve(true)
+      }
+      else{
+        resolve(false)
+      }
+    })
+    .catch((error) => {
+      console.log("login error")
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorMessage)
+      reject(error)
+    });
+  })
 }
 
 export async function loginWithGoogle(){  
   const { $auth } = useNuxtApp()
   const auth:any = $auth
-  
-  signInWithPopup(auth, provider)
-  .then(async(user)=>{
-    console.log(user)
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    const email = error.email;
-    console.log(errorCode+"    -    " + errorMessage+"    -    " + email)
+
+  return new Promise((resolve, reject) => {
+    signInWithPopup(auth, provider)
+      .then(async (user) => {
+        resolve(true); 
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.email;
+        console.log(errorCode + " - " + errorMessage + " - " + email);
+        reject(error); 
+      });
   });
 }
 
@@ -69,22 +84,40 @@ export function signOutUser(){
   const auth:any = $auth
   signOut(auth).then(() => {
     console.log("log Out")
-    // Sign-out successful.
   }).catch((error) => {
-    // An error happened.
+
   });
 }
 
 export function getUID() {
-    const { $auth } = useNuxtApp();
-    const auth:any = $auth;
-    return new Promise((resolve, reject) => {
+  const { $auth } = useNuxtApp();
+  const auth:any = $auth;
+  return new Promise((resolve, reject) => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        resolve(user.uid); // Resolve the promise with uid
+      } else {
+        reject(new Error("User not found"));
+      }
+    });
+  });
+}
+
+export function isUserSignedIn(){
+  const { $auth } = useNuxtApp();
+  const auth:any = $auth;
+  return new Promise((resolve, reject) => {
+    try{
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          resolve(user.uid); // Resolve the promise with uid
+          resolve(true)
         } else {
-          reject(new Error("User not found"));
+          resolve(false)
         }
       });
-    });
+    }
+    catch(error){
+      console.log(error)
+    }
+  });
 }

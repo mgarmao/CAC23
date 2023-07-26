@@ -35,7 +35,7 @@
         <div v-if="!isLoaded">
             Loading...
         </div>
-        <div v-if="isLoaded">
+        <div v-if="isLoaded && !noItems">
             <div  v-for="month in items[0]" :key="1">
                 <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div>
                 <div v-for="item in month.data" :key="item[1]">
@@ -60,6 +60,7 @@
                 </div>
             </div>
         </div>
+        <div v-if="noItems" id="no-items-message"> You Dont Have Any Purchases Yet</div>
         <div v-if="isModalOpen">
             <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid"/>
         </div>
@@ -77,7 +78,7 @@
     const items = ref();
     const monthlyTotal = ref()
 
-    const canCreate = ref(false)
+    const noItems = ref(false)
 
     const inputName = ref("")
     const inputDescription = ref("")
@@ -171,7 +172,6 @@
             inputName.value = ""
             inputPrice.value = ""
             chosenCategory.value = "Category"
-
             setTimeout(() => { getData() }, 500);
         }
         else{
@@ -218,6 +218,13 @@
         isLoaded.value = true
         if(items.value[0].month==month){
             thisMonthHasAnItem.value = true
+        }
+
+        if(items.value[0].length==0){
+            noItems.value = true
+        }
+        else{
+            noItems.value = false
         }
         getThisMonthsTotal()
     }
@@ -453,5 +460,9 @@
         
         padding-top: 1.4rem;
         font-size: 18px;
+    }
+
+    #no-items-message{
+        text-align: center;
     }
 </style>
