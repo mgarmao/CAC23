@@ -16,7 +16,9 @@
             <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
             <textarea id="description-input" placeholder="Description" v-model="inputDescription" :class="inputDescriptionClass"></textarea>
         </div>
-        <div id="category-input" class="noSelect">
+
+        <div id="category-price-input" class="noSelect">
+            <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
             <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false">
                 <option value="" disabled selected >Category</option>
                 <option value="Food">Food</option>
@@ -24,10 +26,9 @@
                 <option value="Tech">Tech</option>
                 <option value="Other">Other</option>
             </select>
+            
         </div>
-        <div >
-            <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
-        </div>        
+              
     </div>
 
     <div id="expense">
@@ -312,7 +313,7 @@
     }
 
     #description-input{
-        border-radius: 0px 0px 5px 5px;
+        border-radius: 0px 0px 0px 5px;
         resize: none;
         background: #282828;
         font-family:'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -321,6 +322,13 @@
         padding-bottom: -0.5px;
         border: solid  1px;
         border-color: #282828;
+    }
+
+    #category-price-input{
+        display: flex;
+        flex-direction: column;
+        width: 25%;
+        margin-top: -0.14rem;
     }
 
     input#name-input{
@@ -343,7 +351,6 @@
     #dollars-input{
         font-size: 15px;
         height: 2.2rem;
-        width: 3rem;
         border-radius: 5px;
         background: #BB86FC;  
         color: #2a2a2a;  
@@ -421,7 +428,8 @@
         text-align: center;
         width: 4rem; 
         overflow: hidden;
-        text-overflow: ellipsis;        
+        text-overflow: ellipsis;   
+        width: 100%;     
     }
 
     .item-options{
