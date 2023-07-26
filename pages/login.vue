@@ -1,4 +1,4 @@
-<template >
+<template>
     <div id="logins">
         <h1 id="title">Log in</h1>
         <input v-model="email" type="email" placeholder="Email">
@@ -16,16 +16,16 @@
 
 </script>
 
-<style scoped>
+<style>
     body{
         transition: all ease 0.5s;
         background-color: #121212;
         color: #FFF;
         font-family: Arial, Helvetica, sans-serif;
     }
-    
+
     h1{
-        color: #fff;
+        color: red;
         font-family: Arial, Helvetica, sans-serif;
     }
 
