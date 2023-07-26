@@ -1,30 +1,33 @@
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword} from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,signOut} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore"; 
 
-export function createNewUser (email:string, password:string) {
-    const { $auth } = useNuxtApp()
-    const {$firestore} = useNuxtApp()
-    const auth:any = $auth
-    const db:any = $firestore
+const provider = new GoogleAuthProvider();
 
-    createUserWithEmailAndPassword(auth, email, password)
-    .then( async(userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        const email = userCredential.user.email
-        const displayName = userCredential.user.displayName
-        const uid = userCredential.user.uid
-        await setDoc(doc(db, "users", uid), {
-          email: email,
-          displayName: displayName,
-          expenseTracker: []
-        });
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorMessage)
-    });
+
+export function createNewUser (email:string, password:string) {
+  const { $auth } = useNuxtApp()
+  const {$firestore} = useNuxtApp()
+  const auth:any = $auth
+  const db:any = $firestore
+
+  createUserWithEmailAndPassword(auth, email, password)
+  .then( async(userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      const email = userCredential.user.email
+      const displayName = userCredential.user.displayName
+      const uid = userCredential.user.uid
+      await setDoc(doc(db, "users", uid), {
+        email: email,
+        displayName: displayName,
+        expenseTracker: []
+      });
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log(errorMessage)
+  });
 }
 
 export async function login(email:string,password:string) {
@@ -43,6 +46,33 @@ export async function login(email:string,password:string) {
         const errorMessage = error.message;
         console.log(errorMessage)
     });
+}
+
+export async function loginWithGoogle(){  
+  const { $auth } = useNuxtApp()
+  const auth:any = $auth
+  
+  signInWithPopup(auth, provider)
+  .then(async(user)=>{
+    console.log(user)
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    const email = error.email;
+    console.log(errorCode+"    -    " + errorMessage+"    -    " + email)
+  });
+}
+
+export function signOutUser(){
+  const { $auth } = useNuxtApp()
+  const auth:any = $auth
+  signOut(auth).then(() => {
+    console.log("log Out")
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  });
 }
 
 export function getUID() {
