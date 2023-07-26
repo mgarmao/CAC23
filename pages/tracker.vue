@@ -62,7 +62,7 @@
         </div>
         <div v-if="noItems" id="no-items-message"> You Dont Have Any Purchases Yet</div>
         <div v-if="isModalOpen">
-            <ExpenseOptions @close="closeModal" @deletedItem="getDataDelayed" @dateChange="getDataDelayed" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
+            <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
         </div>
         <div v-if="isExpenseOpen">
             <Expense @close="closeExpense" @getData="getDataDelayed" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate" :docID="targetExpenseID" :UID="uid"/>
@@ -239,6 +239,11 @@
         else{
             return false
         }
+    }
+
+    const closeModelAndGetData = ()=>{
+        closeModal()
+        getDataDelayed()
     }
 
     onMounted(async () => {
