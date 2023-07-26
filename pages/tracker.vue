@@ -14,7 +14,7 @@
         <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
         <div id="text-input">
             <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
-            <textarea id="description-input" placeholder="Description" v-model="inputDescription" :class="inputDescriptionClass"></textarea>
+            <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
         </div>
 
         <div id="category-price-input" class="noSelect">
@@ -376,7 +376,7 @@
     .item{
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-gap: 1rem;
+        grid-gap: 0.2rem;
         font-size: 15px;
         border-radius: 0.4rem;
         cursor: pointer;
@@ -384,7 +384,7 @@
 
     .item-header{
         padding-left: 0.5rem;
-        width: 14rem;
+        width: 11rem;
     }
 
     .shrink{
@@ -397,15 +397,16 @@
     }
 
     .item-date{
-        padding-left: 0.8rem;
-        width: 50px;
+        padding-left: 0.7rem;
+        width: 25%;
         margin-top: 0.25rem;
+        min-width: 3rem;
     }
 
     .item-name{
-        font-size: 20px;
+        font-size: 18px;
         padding-bottom: 0.2rem;
-
+        width: 75%;
         max-width: 10rem; 
         white-space: nowrap;
         overflow: hidden;
@@ -422,19 +423,20 @@
     .item-category{
         text-align: center;
         width: 3rem;
+        margin-left: 1rem;
     }
 
     .item-price{
         text-align: center;
-        width: 4rem; 
+        width: 5rem; 
         overflow: hidden;
         text-overflow: ellipsis;   
-        width: 100%;     
     }
 
     .item-options{
         width: 0.5rem;
         margin-top: -0.2rem;
+        margin-left: auto;
         cursor: pointer;
     }
 
