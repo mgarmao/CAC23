@@ -23,8 +23,11 @@
         color: #FFF;
         font-family: Arial, Helvetica, sans-serif;
     }
+</style>
 
-    h1{
+<style scoped> 
+
+h1{
         color: red;
         font-family: Arial, Helvetica, sans-serif;
     }
@@ -89,5 +92,4 @@
     #login-google p{
         font-size: 18px;
     }
-
 </style>
