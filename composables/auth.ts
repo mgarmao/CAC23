@@ -4,7 +4,7 @@ import { doc, setDoc } from "firebase/firestore";
 const provider = new GoogleAuthProvider();
 
 
-export function createNewUser (email:string, password:string) {
+export function createNewUserWithEmail (email:string, password:string) {
   const { $auth } = useNuxtApp()
   const {$firestore} = useNuxtApp()
   const auth:any = $auth
@@ -13,18 +13,7 @@ export function createNewUser (email:string, password:string) {
   return new Promise((resolve,reject)=>{
     createUserWithEmailAndPassword(auth, email, password)
     .then( async(userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      const email = userCredential.user.email
-      const displayName = userCredential.user.displayName
-      const uid = userCredential.user.uid
-      await setDoc(doc(db, "users", uid), {
-        email: email,
-        uid: uid,
-        displayName: displayName,
-        expenseTracker: []
-      });
-      resolve(true)
+      resolve(userCredential)
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -61,6 +50,7 @@ export async function loginWithEmail(email:string,password:string) {
   })
 }
 
+
 export async function loginWithGoogle(){  
   const { $auth } = useNuxtApp()
   const auth:any = $auth
@@ -68,7 +58,7 @@ export async function loginWithGoogle(){
   return new Promise((resolve, reject) => {
     signInWithPopup(auth, provider)
       .then(async (user) => {
-        resolve(true); 
+        resolve(user.user); 
       })
       .catch((error) => {
         const errorCode = error.code;

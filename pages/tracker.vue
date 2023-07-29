@@ -229,6 +229,7 @@
         else{
             noItems.value = false
         }
+        console.log(items.value)
         getThisMonthsTotal()
     }
 
@@ -252,7 +253,9 @@
 </script>
 
 <style scoped>
-
+    #pie-chart{
+        width: 1rem;
+    }
     .container{
         display: flex;
     }
@@ -460,8 +463,8 @@
         margin-left: auto;
         margin-top: -0.3rem;
         cursor: pointer;
-        margin-right: 0.4rem;
         padding-left: 0.7rem;
+        padding-right: 0.7rem;
     }
 
     .item-details{

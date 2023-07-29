@@ -13,18 +13,27 @@
     const password = ref("")
 
     const createUser=async ()=>{
-        const result = await createNewUser(email.value,password.value)
-        console.log(result)
+        const userCreds = await createNewUserWithEmail(email.value,password.value)
+        if(userCreds){
+            const result = await createUserDoc(userCreds)
+        }
         if(result==true){
             await navigateTo('/')
         }
     }
 
     const loginGoogle= async()=>{
-        const result = await loginWithGoogle()
-        if(result==true){
+        const userCreds = await loginWithGoogle()
+        const isThereADocAlreadyMade = await isThereUserDocWithUID(userCreds.uid)
+        if(isThereADocAlreadyMade){
             await navigateTo('/')
-        }   
+        }
+        else{
+            const result = await createUserDoc(userCreds)
+            if(result){
+                await navigateTo('/')
+            }
+        }  
     }
 
     onBeforeMount(async()=>{

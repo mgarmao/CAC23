@@ -1,4 +1,4 @@
-import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot,query,orderBy,deleteDoc, Timestamp} from "firebase/firestore";
+import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,addDoc,onSnapshot,query,orderBy,deleteDoc, Timestamp, where} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
@@ -80,6 +80,51 @@ export async function  deleteExpense(uid:any, docID:string){
     catch (error) {
         console.error('Error fetching data from Firestore:', error)
     }
+}
+
+export async function isThereUserDocWithUID(UID:string){
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+    return new Promise(async(resolve,reject)=>{
+        try{
+            const userRef = collection(db, "users");
+            const q = query(userRef, where("uid", "==", UID));
+            const querySnapshot = await getDocs(q);
+            const queryDocsLength = querySnapshot.docs.length
+            if(queryDocsLength>=1){
+                resolve(true)
+            }
+            else{
+                resolve(false)
+            }
+        }
+        catch(error){
+            reject(error)
+        }
+    })
+}
+
+export async function createUserDoc(userCredential:any){
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+
+    const email = userCredential.email
+    const displayName = userCredential.displayName
+    const uid = userCredential.uid
+    return new Promise(async(resolve,reject)=>{
+        try{
+            await setDoc(doc(db, "users", uid), {
+                email: email,
+                uid: uid,
+                displayName: displayName,
+            });
+            resolve(true)
+        }
+        catch(error){
+            reject(error)
+        }
+        
+    })
 }
 
 export function createNewExpense(uid:string, name:string, description:string, price:any, category:string) {

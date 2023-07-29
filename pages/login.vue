@@ -7,7 +7,7 @@
         <button @click="loginEmail" id="email-login-button">Login</button>
         <br>
         <button id="login-google" @click="loginGoogle"><img src="../public/google-logo.svg"><p>Login With Google</p></button>
-        <button @click="signOutUser">LOG OUT</button>
+        <!-- <button @click="signOutUser">LOG OUT</button> -->
     </div>
 </template>
 
@@ -16,10 +16,16 @@
     const password = ref("")
 
     const loginGoogle= async()=>{
-        const result = await loginWithGoogle()
-        if(result==true){
+        const isThereADocAlreadyMade = await isThereUserDocWithUID(userCreds.uid)
+        if(isThereADocAlreadyMade){
             await navigateTo('/')
-        }   
+        }
+        else{
+            const result = await createUserDoc(userCreds)
+            if(result){
+                await navigateTo('/')
+            }
+        }    
     }
 
     const loginEmail = async()=>{
