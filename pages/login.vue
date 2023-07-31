@@ -16,6 +16,7 @@
     const password = ref("")
 
     const loginGoogle= async()=>{
+        const userCreds = await loginWithGoogle()
         const isThereADocAlreadyMade = await isThereUserDocWithUID(userCreds.uid)
         if(isThereADocAlreadyMade){
             await navigateTo('/')
@@ -35,12 +36,12 @@
         }      
     }
 
-    // onBeforeMount(async()=>{
-    //     const isSignedIn = await isUserSignedIn()
-    //     if(isSignedIn){
-    //         await navigateTo('/')
-    //     }
-    // })
+    onBeforeMount(async()=>{
+        const isSignedIn = await isUserSignedIn()
+        if(isSignedIn){
+            await navigateTo('/')
+        }
+    })
 </script>
 
 <style>

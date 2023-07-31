@@ -207,7 +207,6 @@
         else{
             monthlyTotal.value = 0
         }
-
     }
 
     const getDataDelayed = ()=>{
