@@ -60,7 +60,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="noItems" id="no-items-message"> You Dont Have Any Purchases Yet</div>
+        <div v-if="noItems" id="no-items-message"> You Don't Have Any Purchases Yet</div>
         <div v-if="isModalOpen">
             <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
         </div>
@@ -228,7 +228,6 @@
         else{
             noItems.value = false
         }
-        console.log(items.value)
         getThisMonthsTotal()
     }
 

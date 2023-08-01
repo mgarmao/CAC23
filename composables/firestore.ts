@@ -2,26 +2,27 @@ import { doc, getDocs, collection,limit,getDoc,updateDoc,setDoc,serverTimestamp,
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
-export async function getTrackerData(uid: string, errors:number) {
+export async function getTrackerData(uid: string) {
     const { $firestore } = useNuxtApp();
-    const { $auth } = useNuxtApp();
+
     const db: any = $firestore;
-    let items: any = [];
-    let monthlyTotal = 0;
+    
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const d = new Date();
-    const currentMonth = months[d.getMonth()];
 
     const itemsByMonth: { month: string; year: string; data: any[]; monthlyTotal: number }[] = [];
     
-    let errorTracker = errors
 
     async function getData(){
         try {
             const colRef = collection(db, "users", uid, "expenseTracker");
+
+            const newDate = Timestamp.fromDate(new Date("2023-7-14"));
+
             const q = query(colRef, orderBy("Date", "desc"));
             const collectionSnapshot = await getDocs(q);
-    
+            console.log(collectionSnapshot)
+            
+
             // Process each document in the collection
             collectionSnapshot.docs.forEach((thisDoc) => {
                 try{
@@ -172,4 +173,72 @@ export async function changeExpenseDate(uid:any, docID:string, date:string, time
     catch(error){
         console.log(error)
     }
+}
+
+export async function thisMonthsData(uid: string) {
+    const { $firestore } = useNuxtApp();
+    const { $auth } = useNuxtApp();
+    const db: any = $firestore;
+
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const d = new Date();
+
+    const itemsByMonth: { month: string; year: string; data: any[]; monthlyTotal: number }[] = [];
+    
+    async function getData(){
+        try {
+            const colRef = collection(db, "users", uid, "expenseTracker");
+
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+
+            const q = query(colRef, orderBy("Date"));
+            const collectionSnapshot = await getDocs(q);            
+
+            // Process each document in the collection
+            collectionSnapshot.docs.forEach((thisDoc) => {
+                try{
+                    const requestedDoc = thisDoc.data();
+                    if (requestedDoc !== undefined) {
+                        const itemMonth = String(requestedDoc.Date.toDate()).substring(4, 7);
+                        const itemYear = String(requestedDoc.Date.toDate()).substring(11,16)
+
+                        // Check if the month object already exists in the array
+                        const existingMonthIndex = itemsByMonth.findIndex((item) => item.month === itemMonth && item.year === itemYear);
+                        if (existingMonthIndex >= 0) {
+                            // Add the item to the existing month's array
+                            itemsByMonth[existingMonthIndex].data.push([requestedDoc, thisDoc.id, requestedDoc.Date.toDate()]);
+
+                            itemsByMonth[existingMonthIndex].monthlyTotal += parseFloat(requestedDoc.Price);
+                        } else {
+                            // Create a new month object and add the item to its array
+                            const newMonthObject = { month: itemMonth, year: itemYear, data: [[requestedDoc, thisDoc.id, requestedDoc.Date.toDate()]], monthlyTotal: parseFloat(requestedDoc.Price) };
+                            itemsByMonth.push(newMonthObject);
+                        }
+                    }
+                }
+                catch(error){
+                    console.log(error)
+                }
+            });
+    
+            // Sort the array of month objects based on the month's value
+            itemsByMonth.sort((a, b) => {
+                if (a.year === b.year) {
+                    // If the years are the same, sort by the month
+                    return months.indexOf(b.month) - months.indexOf(a.month);
+                } else {
+                    // If the years are different, sort by the year
+                    return b.year.localeCompare(a.year);
+                }
+            });
+    
+        } catch (error) {
+            console.error("Error fetching data from Firestore:", error);
+        }
+    }
+    await getData()
+
+    return [itemsByMonth];
 }

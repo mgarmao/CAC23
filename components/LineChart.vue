@@ -18,7 +18,9 @@
         LineElement,
     } from 'chart.js'
     import { Line } from 'vue-chartjs'
-  
+
+    const props = defineProps(['xData','yData'])
+
     ChartJS.register(
         CategoryScale,
         LinearScale,
@@ -42,10 +44,9 @@
     };
 
     const data = ref({
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'], //x
+        labels: props.xData,
         datasets: [{
-            label: 'My First Dataset',
-            data: [1,4,6,6,7,8,13], //y
+            data: props.yData,
             fill: false,
             borderColor: 'rgb(75, 192, 192)',
             tension: 0.1,
