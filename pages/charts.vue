@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Categories</h1>
-        <PieChart></PieChart>
+        <PieChart :labels="categoriesKeysArray" :values="categoriesValueArray" v-if="isLoaded"></PieChart>
         <LineChart :xData="dateValues" :yData="priceValues" v-if="isLoaded"></LineChart>
     </div>
 </template>
@@ -10,6 +10,10 @@
     import {getUID} from "../composables/auth.ts"
     const dateValues = ref([])
     const priceValues = ref([])
+
+    const categoriesKeysArray = ref([])
+    const categoriesValueArray = ref([])
+
     const isLoaded = ref(false)
 
     onMounted(async()=>{
@@ -17,75 +21,83 @@
         const data = ref( await thisMonthsData(uid))
         let previousDate = ""
 
-        for(let i = 0; i<data.value[0][0].data.length; i++){
-            if(!(previousDate == formatDateToYMD(data.value[0][0].data[i][2]))){
-                dateValues.value.push(formatDateToYMD(new Date(data.value[0][0].data[i][2])))
+        if(data.value[0].length>0){
+            for(let i = 0; i<data.value[0][0].data.length; i++){
+                if(!(previousDate == formatDateToYMD(data.value[0][0].data[i][2]))){
+                    dateValues.value.push(formatDateToYMD(new Date(data.value[0][0].data[i][2])))
+                }
+                previousDate = formatDateToYMD(data.value[0][0].data[i][2])
             }
-            previousDate = formatDateToYMD(data.value[0][0].data[i][2])
-        }
 
 
+            let sameDateAgragatePrice = []
+            let sameDateAdding = false
+            let lastNoneMatchingDateI = 0
+            
+            for(let i = 0; i<data.value[0][0].data.length; i++){
+                if(!(previousDate == formatDateToYMD(data.value[0][0].data[i][2]))){
 
+                    if(sameDateAdding){
+                        sameDateAgragatePrice.push(data.value[0][0].data[lastNoneMatchingDateI][0].Price)
 
-
-
-
-        let sameDateAgragatePrice = []
-        let sameDateAdding = false
-        let lastNoneMatchingDateI = 0
-        
-        for(let i = 0; i<data.value[0][0].data.length; i++){
-            if(!(previousDate == formatDateToYMD(data.value[0][0].data[i][2]))){
-
-                if(sameDateAdding){
-                    sameDateAgragatePrice.push(data.value[0][0].data[lastNoneMatchingDateI][0].Price)
-
-                    let totalPrice = 0
-                    for(let n=0; n<sameDateAgragatePrice.length; n++){
-                        totalPrice = sameDateAgragatePrice[n]+totalPrice
+                        let totalPrice = 0
+                        for(let n=0; n<sameDateAgragatePrice.length; n++){
+                            totalPrice = sameDateAgragatePrice[n]+totalPrice
+                        }
+                        
+                        priceValues.value[lastNoneMatchingDateI] = totalPrice
+                        
+                        sameDateAdding=false
                     }
-                    
-                    priceValues.value[lastNoneMatchingDateI] = totalPrice
-                    
-                    sameDateAdding=false
-                }
 
 
-                if(i>0){
-                    const agragatePricePrice = data.value[0][0].data[i][0].Price+priceValues.value[lastNoneMatchingDateI]
-                    priceValues.value.push(agragatePricePrice)
+                    if(i>0){
+                        const agragatePricePrice = data.value[0][0].data[i][0].Price+priceValues.value[lastNoneMatchingDateI]
+                        priceValues.value.push(agragatePricePrice)
+                    }
+                    else{
+                        priceValues.value.push(data.value[0][0].data[i][0].Price)
+                    }
+
+                    lastNoneMatchingDateI = i
                 }
+
                 else{
-                    priceValues.value.push(data.value[0][0].data[i][0].Price)
+                    sameDateAgragatePrice.push(data.value[0][0].data[i][0].Price)
+                    sameDateAdding = true
                 }
 
-                lastNoneMatchingDateI = i
+                previousDate = formatDateToYMD(data.value[0][0].data[i][2])
             }
 
+            if(sameDateAdding){
+                sameDateAgragatePrice.push(data.value[0][0].data[lastNoneMatchingDateI][0].Price)
+                let totalPrice = 0
+                for(let n=0; n<sameDateAgragatePrice.length; n++){
+                    totalPrice = sameDateAgragatePrice[n] +totalPrice
+                }
+                priceValues.value[lastNoneMatchingDateI] = totalPrice
+
+                sameDateAdding=false
+            }
+        }
+
+
+        let categories = []
+
+        for(let i=0; i<data.value[0][0].data.length; i++){
+            if(categories.hasOwnProperty(data.value[0][0].data[i][0].Category)){
+                categories[data.value[0][0].data[i][0].Category] = (categories[data.value[0][0].data[i][0].Category]+1)
+            }
             else{
-                sameDateAgragatePrice.push(data.value[0][0].data[i][0].Price)
-                sameDateAdding = true
+                categories[data.value[0][0].data[i][0].Category] = 1
             }
-
-            previousDate = formatDateToYMD(data.value[0][0].data[i][2])
         }
-
-        if(sameDateAdding){
-            sameDateAgragatePrice.push(data.value[0][0].data[lastNoneMatchingDateI][0].Price)
-            let totalPrice = 0
-            for(let n=0; n<sameDateAgragatePrice.length; n++){
-                totalPrice = sameDateAgragatePrice[n] +totalPrice
-            }
-            priceValues.value[lastNoneMatchingDateI] = totalPrice
-
-            sameDateAdding=false
-        }
-        console.log(priceValues.value)
-
-
-
         
+        categoriesKeysArray.value = Object.keys(categories)
+        categoriesValueArray.value = Object.values(categories)
 
+        // categoriesValueArray.value = Object.values(categories).map((amount) => ((amount / data.value[0][0].data.length)*100)) //Percent
 
         isLoaded.value = true
     })

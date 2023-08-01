@@ -17,6 +17,8 @@
   } from 'chart.js'
   import { Pie } from 'vue-chartjs'
   
+  const props = defineProps(['labels','values'])
+
   ChartJS.register(ArcElement, Tooltip, Legend)
   const plugin = {
     id: 'customCanvasBackgroundColor',
@@ -31,16 +33,9 @@
     };
 
     const data = ref({
-        labels: [
-            'Red',
-            'Blue',
-            'Yellow',
-            'black',
-            'orange',
-        ],
+        labels: props.labels,
         datasets: [{
-            label: 'My First Dataset',
-            data: [300, 50, 100],
+            data: props.values,
             backgroundColor: [
             'rgb(255, 99, 132)',
             'rgb(54, 162, 235)',
