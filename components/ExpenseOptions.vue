@@ -2,7 +2,7 @@
     <div class="modal-overlay" @click.self="handleClose" :class="{ 'fade-in': isOpen, 'fade-out':!isOpen}">
         <div class="modal-container" :class="{ 'slide-in': isOpen, 'slide-out':!isOpen}">
             <div>
-              <input type="date" id="date-input" max="2023-07-21" v-model="date" @click="checkIfDateInput" @keypress="checkIfDateInput">
+              <input type="date" id="date-input" :max="today" v-model="date" @click="checkIfDateInput" @keypress="checkIfDateInput">
               <input type="time" id="time-input" v-model="time">
               <br>
               <button @click="handleDateChange" id="change-btn" :disabled="buttonDisabled">Change Date</button>
@@ -18,8 +18,9 @@
   const props = defineProps(['UID','docID','itemDate'])
   const newDate = new Date(props.itemDate-1).toJSON().slice(0, 10)
   const newTime = String(props.itemDate).substring(16,24)
-  
   const date = ref(newDate)
+  const today = ref(new Date().toJSON().slice(0, 10))
+
   const time = ref(newTime)
 
   const isOpen = ref(true)
@@ -52,6 +53,15 @@
     emit('dateChange')
     changeExpenseDate(props.UID,props.docID,date.value,time.value)
   }
+
+  function formatDateToYMD(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  }
+
 
   onMounted(()=>{
     checkIfDateInput()

@@ -5,7 +5,6 @@
         <div id="month">{{month}}</div>
         <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
     </div>
-
     <div id="month-stats">
         <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
     </div>
@@ -92,6 +91,9 @@
     const targetExpenseDate = ref()
 
     const thisMonthHasAnItem = ref(false)
+
+    const dateValues = ref()
+    const priceValues = ref()
 
     const targetDocID = ref("")
     const targetName = ref("")
@@ -217,7 +219,6 @@
         uid.value = await getUID()
         const result = await getTrackerData(uid.value)
         items.value = result
-        isLoaded.value = true
         if(items.value[0].month==month){
             thisMonthHasAnItem.value = true
         }
@@ -246,14 +247,14 @@
     }
 
     onMounted(async () => {
-        getData()
+        await getData()
+        isLoaded.value = true
     });
+
 </script>
 
 <style scoped>
-    #pie-chart{
-        width: 1rem;
-    }
+
     .container{
         display: flex;
     }

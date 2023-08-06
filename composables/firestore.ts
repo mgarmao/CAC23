@@ -19,10 +19,8 @@ export async function getTrackerData(uid: string) {
             const newDate = Timestamp.fromDate(new Date("2023-7-14"));
 
             const q = query(colRef, orderBy("Date", "desc"));
-            const collectionSnapshot = await getDocs(q);
-            console.log(collectionSnapshot)
-            
-
+            const collectionSnapshot = await getDocs(q);            
+            console.log("get docs")
             // Process each document in the collection
             collectionSnapshot.docs.forEach((thisDoc) => {
                 try{
@@ -70,6 +68,10 @@ export async function getTrackerData(uid: string) {
     return [itemsByMonth];
 }
 
+export function timestampToDate(timestamp:any){
+    return timestamp.toDate()
+}
+
 
 export async function  deleteExpense(uid:any, docID:string){
     const { $firestore } = useNuxtApp()
@@ -91,6 +93,7 @@ export async function isThereUserDocWithUID(UID:string){
             const userRef = collection(db, "users");
             const q = query(userRef, where("uid", "==", UID));
             const querySnapshot = await getDocs(q);
+            console.log("get docs")
             const queryDocsLength = querySnapshot.docs.length
             if(queryDocsLength>=1){
                 resolve(true)
@@ -194,7 +197,8 @@ export async function thisMonthsData(uid: string) {
 
 
             const q = query(colRef, orderBy("Date"));
-            const collectionSnapshot = await getDocs(q);            
+            const collectionSnapshot = await getDocs(q);        
+            console.log("GET")    
 
             // Process each document in the collection
             collectionSnapshot.docs.forEach((thisDoc) => {

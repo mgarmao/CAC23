@@ -60,7 +60,7 @@
 </script>
 <style scoped>
 #background{
-    background-color: #fff;
+    background-color: #282828;
     border-radius: 0.3rem;
 }
 </style>

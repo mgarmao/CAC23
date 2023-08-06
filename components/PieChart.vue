@@ -1,5 +1,5 @@
 <template>
-    <div id="background">
+    <div id="background" :style="widthRef">
         <Pie :data="data" :options="options"/>
     </div>
   </template>
@@ -17,9 +17,13 @@
   } from 'chart.js'
   import { Pie } from 'vue-chartjs'
   
-  const props = defineProps(['labels','values'])
+  const props = defineProps(['labels','values','width'])
+
+  const widthRef = ref("width:"+props.width+"px;")
 
   ChartJS.register(ArcElement, Tooltip, Legend)
+  ChartJS.defaults.color = '#fff';
+
   const plugin = {
     id: 'customCanvasBackgroundColor',
     beforeDraw: (chart, args, options) => {
@@ -52,7 +56,10 @@
 </script>
 <style scoped>
 #background{
-    background-color: #fff;
+    /* background-color: #fff; */
     border-radius: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>
