@@ -9,12 +9,12 @@
         Chart as ChartJS,
         Title,
         Tooltip,
-        Legend,
         BarElement,
         CategoryScale,
         LinearScale,
         ArcElement,
         PointElement,
+        Legend,
         LineElement,
     } from 'chart.js'
     import { Line } from 'vue-chartjs'
@@ -23,13 +23,26 @@
 
     ChartJS.register(
         CategoryScale,
+        Legend,
         LinearScale,
         PointElement,
         LineElement,
         Title,
-        Tooltip,
-        Legend
+        Tooltip
     ) 
+
+
+    const lineColor = "#BB86FC"
+    const gridColor = "#8e8e9f"
+    const fillColor = "#A677DF"
+
+    const textColor = "#fff"
+
+    ChartJS.defaults.backgroundColor = fillColor;
+    ChartJS.defaults.borderColor = gridColor;
+    ChartJS.defaults.color = textColor;
+
+
 
     const plugin = {
         id: 'customCanvasBackgroundColor',
@@ -46,15 +59,19 @@
     const data = ref({
         labels: props.xData,
         datasets: [{
+            label: "",
             data: props.yData,
             fill: false,
-            borderColor: 'rgb(75, 192, 192)',
+            borderColor: lineColor,
             tension: 0.1,
         }]
     })
     
     const options= ref({
-        responsive: true
+        responsive: true,
+        legend: {
+            display: false,
+        }
     })
 
 </script>

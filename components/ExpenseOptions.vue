@@ -123,7 +123,7 @@
     margin-top:2rem;
     padding: 6px 12px;
     border: none;
-    background-color: #e74c3c;
+    background-color: #ef4d3b;
     color: #fff;
     border-radius: 5px;
     font-size: 16px;

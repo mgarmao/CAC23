@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 id="heading">Overview</h1>
+        <h2> AUGS</h2>
         <div id="heading-chart">
             <PieChart :labels="categoriesKeysArray" :values="categoriesValueArray" :width="190" v-if="isLoaded"></PieChart>
             <br>
@@ -16,6 +16,10 @@
             </div>
             <br>
         </div>
+    </div>
+    <div id="footer-menu">
+        <tracker-icon fillColor="#fff"></tracker-icon>        
+        <tracker-icon fillColor="#fff"></tracker-icon>        
     </div>
 </template>
 
@@ -330,13 +334,16 @@ import {getUID} from "../composables/auth.ts"
                 else if (n+1>=categoryDocs.value[categoriesKeysArray.value[i]].length){
                     if(agragatingPrice){
                         catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]=agragatePrice                
-                        catLineChartData.value[categoriesKeysArray.value[i]][1][n+1] = thisItemsDate
+                        catLineChartData.value[categoriesKeysArray.value[i]][1][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1] = thisItemsDate
+                        console.log(thisItemsDate)
                         agragatePrice = 0
                         agragatingPrice = false
                     }
                 }
                 lastItemDate = thisItemsDate
                 lastItemDay = thisItemsDay
+                console.log(catLineChartData.value.Other[0])
+                console.log(catLineChartData.value.Other[1])
             }
             catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)
         }
@@ -366,6 +373,12 @@ import {getUID} from "../composables/auth.ts"
     }
 
 </script>
+
+<style>
+img[src$="../public/tracker-icon.svg"] #my-path {
+    fill: red !important;
+}
+</style>
 
 <style scoped>
 #heading-chart{
