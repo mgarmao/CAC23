@@ -17,10 +17,7 @@
             <br>
         </div>
     </div>
-    <div id="footer-menu">
-        <tracker-icon fillColor="#fff"></tracker-icon>        
-        <tracker-icon fillColor="#fff"></tracker-icon>        
-    </div>
+    
 </template>
 
 <script setup>
