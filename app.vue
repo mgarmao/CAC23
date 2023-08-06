@@ -1,7 +1,7 @@
 <template>
-  <div >
+  <div>
     <NuxtPage/>
-    <div id="footer-menu" @click="checkRoute">
+    <div id="footer-menu" >
         <NuxtLink to="/tracker"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
         <NuxtLink to="/charts"><charts-icon :fillColor="chartsFillColor"></charts-icon></NuxtLink>
     </div>
@@ -9,25 +9,33 @@
 </template>
 
 <script setup>
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
 
   const chartsFillColor = ref("#fff")
   const trackerFillColor = ref("#fff")
-  const checkRoute = ()=>{
-    const route = useRoute()
-    console.log(route.fullPath)
-    if(route.fullPath=="/charts"){
+
+  router.beforeEach ((to, from)=>{
+    changeColors(to.fullPath)
+  })
+
+  const changeColors = (path)=>{
+    if(path=="/charts"){
       chartsFillColor.value = "#B37FF2"
       trackerFillColor.value = "#fff"
     }
-    if(route.fullPath=="/tracker"){
+    else if(path=="/tracker"){
       chartsFillColor.value = "#fff"
       trackerFillColor.value = "#B37FF2"
     }
-    setTimeout(() => { checkRoute() }, 200)
+    else{
+      chartsFillColor.value = "#fff"
+      trackerFillColor.value = "#fff"
+    }
   }
 
-  checkRoute()
-
+  changeColors(route.fullPath)
 </script>
 
 

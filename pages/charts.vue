@@ -332,15 +332,13 @@ import {getUID} from "../composables/auth.ts"
                     if(agragatingPrice){
                         catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]=agragatePrice                
                         catLineChartData.value[categoriesKeysArray.value[i]][1][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1] = thisItemsDate
-                        console.log(thisItemsDate)
                         agragatePrice = 0
                         agragatingPrice = false
                     }
                 }
                 lastItemDate = thisItemsDate
                 lastItemDay = thisItemsDay
-                console.log(catLineChartData.value.Other[0])
-                console.log(catLineChartData.value.Other[1])
+
             }
             catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)
         }
