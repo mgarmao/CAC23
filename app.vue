@@ -1,7 +1,7 @@
 <template>
   <div>
     <NuxtPage/>
-    <div id="footer-menu" >
+    <div id="footer-menu" :class="{'hidden':hide}">
         <NuxtLink to="/tracker"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
         <NuxtLink to="/charts"><charts-icon :fillColor="chartsFillColor"></charts-icon></NuxtLink>
     </div>
@@ -10,8 +10,10 @@
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-const router = useRouter()
-const route = useRoute()
+  const router = useRouter()
+  const route = useRoute()
+
+  const hide = ref(false)
 
   const chartsFillColor = ref("#fff")
   const trackerFillColor = ref("#fff")
@@ -21,6 +23,13 @@ const route = useRoute()
   })
 
   const changeColors = (path)=>{
+    if((path=="/login")||(path=="/signup")||(path=="/")){
+      hide.value = true
+    }
+    else{
+      hide.value = false
+    }
+
     if(path=="/charts"){
       chartsFillColor.value = "#B37FF2"
       trackerFillColor.value = "#fff"
@@ -58,5 +67,9 @@ const route = useRoute()
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Define grid columns */
     grid-gap: 20px; /* Adjust spacing between menu items */
     justify-items: center; /* Center the menu items horizontally */
+  }
+  
+  #footer-menu.hidden{
+    display: none;
   }
 </style>
