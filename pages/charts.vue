@@ -11,7 +11,7 @@
         <h1>Categorical Breakdown</h1>
         <div v-for="category in categoriesKeysArray">
             <div id="category-container">
-                <h3 id="category-title">{{ category }}: ${{ catLineChartData[category][0][catLineChartData[category][0].length-1] }}</h3>
+                <h3 id="category-title">{{ category }}: ${{ catLineChartData[category][0][(catLineChartData[category][0].length)-2] }}</h3>
                 <LineChart :xData="catLineChartData[category][1]" :yData="catLineChartData[category][0]" v-if="isLoaded"></LineChart>
             </div>
             <br>
@@ -215,14 +215,12 @@ import {getUID} from "../composables/auth.ts"
                 const thisItemsPrice = categoryDocs.value[categoriesKeysArray.value[i]][n][0].Price
 
                 if(n==1&&(thisItemsDay!=1)){
-                    console.log("Date = 1 and its not the first")
                     catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)                
                     catLineChartData.value[categoriesKeysArray.value[i]][1].push(firstOfThisMonth)
                     
                 }
 
                 if(n==1){
-                    console.log("Adding first data")
                     for(let d=2; d<thisItemsDay; d++){
                         let dDate = ""
                         if(d>=10){
@@ -248,14 +246,11 @@ import {getUID} from "../composables/auth.ts"
                         }
                         agragatePrice = thisItemsPrice + agragatePrice
                         agragatingPrice = true
-                        console.log("Samies")
-                        console.log(agragatePrice)
                     }
 
                     else if(thisItemsDay!=lastItemDay+1){
                         let continuingPrice = previousPrice
                         if(agragatingPrice){
-                            console.log("Unique Date, Adding agragate")
                             catLineChartData.value[categoriesKeysArray.value[i]][0][lastUniqueDateIndex]= agragatePrice                
                             catLineChartData.value[categoriesKeysArray.value[i]][1][lastUniqueDateIndex] = lastItemDate
                             continuingPrice = agragatePrice
@@ -263,7 +258,6 @@ import {getUID} from "../composables/auth.ts"
                             agragatingPrice = false
                         }
 
-                        console.log("space inbetween data")
                         lastUniqueDateIndex = catLineChartData.value[categoriesKeysArray.value[i]][0].length-1
                         for(let d=lastItemDay+1; d<thisItemsDay; d++){
                             let dDate = ""
@@ -273,7 +267,6 @@ import {getUID} from "../composables/auth.ts"
                             else{
                                 dDate = thisMonthAndYear+"-0"+d
                             }
-                            console.log(dDate)
                             catLineChartData.value[categoriesKeysArray.value[i]][0].push(continuingPrice)                
                             catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
                         }  
@@ -284,7 +277,6 @@ import {getUID} from "../composables/auth.ts"
                     else{
                         let continuingPrice = catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]
                         if(agragatingPrice){
-                            console.log("Unique Date, Adding agragate",lastItemDate)
                             catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]= agragatePrice                
                             catLineChartData.value[categoriesKeysArray.value[i]][1][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1] = lastItemDate
                             continuingPrice = agragatePrice
@@ -294,7 +286,6 @@ import {getUID} from "../composables/auth.ts"
                         
                         
                         lastUniqueDateIndex = catLineChartData.value[categoriesKeysArray.value[i]][0].length-1
-                        console.log("adding data unique",thisItemsDate)
                         catLineChartData.value[categoriesKeysArray.value[i]][0].push(thisItemsPrice+continuingPrice)                
                         catLineChartData.value[categoriesKeysArray.value[i]][1].push(thisItemsDate)
                     }
@@ -302,7 +293,6 @@ import {getUID} from "../composables/auth.ts"
                 }
 
                 if(agragatingPrice&&(thisItemsDay!=lastItemDay)){
-                    console.log("putting agrigate")
                     catLineChartData.value[categoriesKeysArray.value[i]][0].push(agragatePrice)                
                     catLineChartData.value[categoriesKeysArray.value[i]][1].push(lastItemDate)
                     agragatePrice = 0
@@ -313,7 +303,6 @@ import {getUID} from "../composables/auth.ts"
                 if(!(n+1<categoryDocs.value[categoriesKeysArray.value[i]].length)&&(thisItemsDay!=day)){
                     let continuingPrice = 0
                     if(agragatingPrice){
-                        console.log("Adding agrigate on continueation")
                         continuingPrice = agragatePrice
 
                         catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]=agragatePrice                
@@ -327,7 +316,6 @@ import {getUID} from "../composables/auth.ts"
                         continuingPrice = previousPrice
                     }
                     for(let d=thisItemsDay+1; d<=day; d++){
-                        console.log("Continuing Line")
                         let dDate = ""
                         if(d>=10){
                             dDate = thisMonthAndYear+"-"+d
@@ -340,17 +328,13 @@ import {getUID} from "../composables/auth.ts"
                     }
                 }
                 else if (n+1>=categoryDocs.value[categoriesKeysArray.value[i]].length){
-                    console.log(categoryDocs.value[categoriesKeysArray.value[i]].length,n)
                     if(agragatingPrice){
-                        console.log("HEY")
                         catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]=agragatePrice                
                         catLineChartData.value[categoriesKeysArray.value[i]][1][n+1] = thisItemsDate
                         agragatePrice = 0
                         agragatingPrice = false
                     }
                 }
-                console.log(catLineChartData.value[categoriesKeysArray.value[i]][0])
-
                 lastItemDate = thisItemsDate
                 lastItemDay = thisItemsDay
             }
@@ -359,11 +343,18 @@ import {getUID} from "../composables/auth.ts"
    
         
         // categoriesValueArray.value = Object.values(categories).map((amount) => ((amount / data.value[0][0].data.length)*100)) //Percent
-
+        catLineChartData.value.sort(function (a, b) {
+            if (a.name < b.name) {
+                return -1;
+            }
+            if (a.name > b.name) {
+                return 1;
+            }
+            return 0;
+        });
+    
         isLoaded.value = true
     })
-
-    // previousDate = formatDateToYMD(timestampToDate(categoryDocs.value[categoriesKeysArray.value[i]][n][0].Date))
 
 
     function formatDateToYMD(date) {
