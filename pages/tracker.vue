@@ -385,6 +385,7 @@
 
     #expense{
         color: white;
+        padding-bottom: 60px;
     }
 
     .month-title{

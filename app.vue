@@ -1,6 +1,7 @@
 <template>
   <div>
-    <NuxtPage/>
+    <NuxtPage class="content"/>
+    <div></div>
     <div id="footer-menu" :class="{'hidden':hide}">
         <NuxtLink to="/tracker"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
         <NuxtLink to="/charts"><charts-icon :fillColor="chartsFillColor"></charts-icon></NuxtLink>
@@ -49,27 +50,36 @@ import { useRouter, useRoute } from 'vue-router'
 
 
 <style>
-  body{
-    transition: all ease 0.5s;
-    background-color: #121212;
-    color: #FFF;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  #footer-menu{
-    position: fixed; /* Fixed position to keep the footer at the bottom */
-    bottom: 0; /* Align the footer to the bottom of the screen */
-    left: 0; /* Align the footer to the left edge of the screen */
-    width: 100%; /* Make the footer span the full width of the screen */
-    background-color: #333; /* Background color for the footer */
-    color: #fff; /* Text color for the footer menu links */
-    padding: 20px; /* Adjust padding to your liking */
-    display: grid; /* Use CSS Grid */
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Define grid columns */
-    grid-gap: 20px; /* Adjust spacing between menu items */
-    justify-items: center; /* Center the menu items horizontally */
-  }
-  
-  #footer-menu.hidden{
-    display: none;
-  }
+  body {
+  margin: 0; /* Remove default margin to avoid unwanted spaces */
+  padding: 0; /* Remove default padding to avoid unwanted spaces */
+  transition: all ease 0.5s;
+  background-color: #121212;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.content {
+  /* Calculate the height of the content area to make space for the footer */
+  min-height: calc(100vh - 60px); /* 60px is the height of the footer */
+  padding-bottom: 100px; /* Ensure there is space for the footer */
+}
+
+#footer-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-gap: 0px;
+  justify-items: center;
+}
+
+#footer-menu.hidden {
+  display: none;
+}
 </style>
