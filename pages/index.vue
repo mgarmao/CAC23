@@ -1,68 +1,70 @@
 <template>
-    <div id="header">
-        <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
-    </div>
-    <br>
-    <div id="body1">
-        <div id="body1-words">
-            <div id="monthly-statement">> Monthly Expenses: ${{price}} </div>
-            <div id="tracking-statement">Currently On Track To Stay On Budget</div>
-            <br>
-            <div id="spending-insight">Your spending is up 5% compared to this time last month</div>
+    <div>
+        <div id="header">
+            <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
         </div>
-    </div> 
-
-    <div id="tabs-menu" class="noSelect">
-
-        <NuxtLink to="/tracker">
-            <div class="tab">
-                <img src="../public/tabs-icon/chart-line-solid.svg" alt="tracker" class="tab-icon">
-                <div class="tab-header">Tracker</div>
+        <br>
+        <div id="body1">
+            <div id="body1-words">
+                <div id="monthly-statement">> Monthly Expenses: ${{price}} </div>
+                <div id="tracking-statement">Currently On Track To Stay On Budget</div>
+                <br>
+                <div id="spending-insight">Your spending is up 5% compared to this time last month</div>
             </div>
-        </NuxtLink>
+        </div> 
 
-        <NuxtLink to="/calculator">
-            <div class="tab">
-                <img src="../public/tabs-icon/calculator-solid.svg" alt="calculators" class="tab-icon">
-                <div class="tab-header">Calculators</div>
-            </div>
-        </NuxtLink>
+        <div id="tabs-menu" class="noSelect">
 
-        <NuxtLink to="/tracker">
-            <div class="tab">
-                <img src="../public/tabs-icon/book-open-solid.svg" alt="articles" class="tab-icon">
-                <div class="tab-header">Articles</div>
-            </div>
-        </NuxtLink>
-    </div>
+            <NuxtLink to="/tracker">
+                <div class="tab">
+                    <img src="../public/tabs-icon/chart-line-solid.svg" alt="tracker" class="tab-icon">
+                    <div class="tab-header">Tracker</div>
+                </div>
+            </NuxtLink>
 
-    <div id="articles">
-        <div id="articles-header">Top Articles</div>
-        <div id="article-options">
-            <div class="article" id="1">
-                <img src="" alt="">
-                <div id="headline">What is Compound Interest?</div>
-            </div>
+            <NuxtLink to="/calculator">
+                <div class="tab">
+                    <img src="../public/tabs-icon/calculator-solid.svg" alt="calculators" class="tab-icon">
+                    <div class="tab-header">Calculators</div>
+                </div>
+            </NuxtLink>
 
-            <div class="article" id="2">
-                <img src="" alt="">
-                <div id="headline">How to turn your Lincolns into Benjamins</div>
-            </div>
-            
-            <div class="article" id="3">
-                <img src="" alt="">
-                <div id="headline">What to watch for in the market this year</div>
-            </div>
-            
-            <div class="article" id="4">
-                <img src="" alt="">
-                <div id="headline">History of Wall Street</div>
-            </div>
+            <NuxtLink to="/tracker">
+                <div class="tab">
+                    <img src="../public/tabs-icon/book-open-solid.svg" alt="articles" class="tab-icon">
+                    <div class="tab-header">Articles</div>
+                </div>
+            </NuxtLink>
+        </div>
 
-            <!-- <div class="article" id="5">
-                <img src="" alt="">
-                <div id="headline">History of Wall Street Bets</div>
-            </div> -->
+        <div id="articles">
+            <div id="articles-header">Top Articles</div>
+            <div id="article-options">
+                <div class="article" id="1">
+                    <img src="" alt="">
+                    <div id="headline">What is Compound Interest?</div>
+                </div>
+
+                <div class="article" id="2">
+                    <img src="" alt="">
+                    <div id="headline">How to turn your Lincolns into Benjamins</div>
+                </div>
+                
+                <div class="article" id="3">
+                    <img src="" alt="">
+                    <div id="headline">What to watch for in the market this year</div>
+                </div>
+                
+                <div class="article" id="4">
+                    <img src="" alt="">
+                    <div id="headline">History of Wall Street</div>
+                </div>
+
+                <!-- <div class="article" id="5">
+                    <img src="" alt="">
+                    <div id="headline">History of Wall Street Bets</div>
+                </div> -->
+            </div>
         </div>
     </div>
 </template>

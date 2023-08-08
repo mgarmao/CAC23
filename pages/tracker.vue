@@ -1,43 +1,46 @@
 <template>
-    <div id="header">
-        <div id="back-btn" class="noSelect"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
-        <div id="this-month">This Month</div>
-        <div id="month">{{month}}</div>
-        <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
-    </div>
-    <div id="month-stats">
-        <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
-    </div>
-
-    <div id="input-section">
-        <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
-        <div id="text-input">
-            <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
-            <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
+    <div id="body">
+        <div id="header">
+            <div id="back-btn" class="noSelect"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
+            <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
+        </div>
+        <div id="month-ticker">
+            <button @click="goBackMonth">,</button>
+            {{ selectedMonth }}
+            <button @click="goFowardMonth">,</button>
+        </div>
+        <div id="month-stats">
+            <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
         </div>
 
-        <div id="category-price-input" class="noSelect">
-            <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
-            <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false">
-                <option value="" disabled selected >Category</option>
-                <option value="Food">Food</option>
-                <option value="Travel">Travel</option>
-                <option value="Tech">Tech</option>
-                <option value="Other">Other</option>
-            </select>
-            
-        </div>
-              
-    </div>
+        <div id="input-section">
+            <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
+            <div id="text-input">
+                <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
+                <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
+            </div>
 
-    <div id="expense">
-        <div v-if="!isLoaded">
-            Loading...
+            <div id="category-price-input" class="noSelect">
+                <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
+                <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false">
+                    <option value="" disabled selected >Category</option>
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Tech">Tech</option>
+                    <option value="Other">Other</option>
+                </select>
+                
+            </div>
+                
         </div>
-        <div v-if="isLoaded && !noItems">
-            <div  v-for="month in items[0]" :key="1">
-                <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div>
-                <div v-for="item in month.data" :key="item[1]">
+
+        <div id="expense">
+            <div v-if="!isLoaded">
+                Loading...
+            </div>
+            <div v-if="isLoaded && !noItems">
+                <!-- <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div> -->
+                <div v-for="item in items.data" :key="item.month">
                     {{updateExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)}}
                     <div class="item noSelect" @click.stop="openExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
                         <div class="item-date">{{ toDate(item[2]) }}</div>
@@ -58,16 +61,15 @@
                     <br>    
                 </div>
             </div>
+            <div v-if="noItems" id="no-items-message"> You Don't Have Any Purchases Yet</div>
+            <div v-if="isModalOpen">
+                <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
+            </div>
+            <div v-if="isExpenseOpen">
+                <Expense @close="closeExpense" @getData="getDataDelayed" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate" :docID="targetExpenseID" :UID="uid"/>
+            </div>  
         </div>
-        <div v-if="noItems" id="no-items-message"> You Don't Have Any Purchases Yet</div>
-        <div v-if="isModalOpen">
-            <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
-        </div>
-        <div v-if="isExpenseOpen">
-            <Expense @close="closeExpense" @getData="getDataDelayed" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate" :docID="targetExpenseID" :UID="uid"/>
-        </div>  
     </div>
-    
 </template>
 
 <script setup>   
@@ -79,6 +81,8 @@
 
     const noItems = ref(false)
 
+    let startingMonth = ""
+    
     const inputName = ref("")
     const inputDescription = ref("")
     const chosenCategory = ref("")
@@ -92,8 +96,8 @@
 
     const thisMonthHasAnItem = ref(false)
 
-    const dateValues = ref()
-    const priceValues = ref()
+    const selectedMonthIndex = ref(0)
+    const selectedMonth = ref("")
 
     const targetDocID = ref("")
     const targetName = ref("")
@@ -171,7 +175,8 @@
     }
 
     const newExpense = async()=>{
-        if((inputName.value != "")&&(inputPrice.value!="")&&(chosenCategory.value!="")){
+        if((inputName.value != "")&&(inputPrice.value!="")&&(chosenCategory.value!="")&&(chosenCategory.value!="Category")){
+            console.log(chosenCategory.value)
             await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
             inputName.value = ""
             inputDescription.value = ""
@@ -196,17 +201,18 @@
 
 
     const getThisMonthsTotal = ()=>{
-        if(items.value[0][0]!=undefined){
-            let firstItemMonth = items.value[0][0].month
+        if(items.value!=undefined){
+            let firstItemMonth = items.value.month
             let thisMonthTrunked = month.value.substring(0,3)
             if(firstItemMonth==thisMonthTrunked){
-                monthlyTotal.value = items.value[0][0].monthlyTotal
+                monthlyTotal.value = items.value.monthlyTotal
             }
             else{
                 monthlyTotal.value = 0
             }
         }
         else{
+            noItems.value = true
             monthlyTotal.value = 0
         }
     }
@@ -218,16 +224,20 @@
     const getData = async()=>{
         uid.value = await getUID()
         const result = await getTrackerData(uid.value)
-        items.value = result
-        if(items.value[0].month==month){
-            thisMonthHasAnItem.value = true
-        }
+        console.log(result)
+        items.value = result[0][selectedMonthIndex.value]
+        
+        if(items.value!=undefined){
+            if(items.value.month==month){
+                thisMonthHasAnItem.value = true
+            }
 
-        if(items.value[0].length==0){
-            noItems.value = true
-        }
-        else{
-            noItems.value = false
+            if(items.value.length==0){
+                noItems.value = true
+            }
+            else{
+                noItems.value = false
+            }
         }
         getThisMonthsTotal()
     }
@@ -246,15 +256,39 @@
         getDataDelayed()
     }
 
+    const goBackMonth = ()=>{
+        selectedMonthIndex.value++
+        selectedMonth.value = months[(startingMonth-selectedMonthIndex.value)-1]
+        getData()
+    }
+
+    const goFowardMonth=()=>{
+        if(!(selectedMonthIndex.value<=0)){
+            selectedMonthIndex.value--
+            selectedMonth.value = months[(startingMonth-selectedMonthIndex.value)-1]
+            getData()
+        }
+       
+    }
+
     onMounted(async () => {
         await getData()
+        startingMonth = getMonthFromString(items.value.month)
+        selectedMonth.value = months[(startingMonth-selectedMonthIndex.value)-1]
         isLoaded.value = true
     });
+
+    function getMonthFromString(mon){
+        return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
+    }
 
 </script>
 
 <style scoped>
-
+    #body{
+        margin: 0.2rem;
+        padding: 0.2rem;
+    }
     .container{
         display: flex;
     }
@@ -385,7 +419,6 @@
 
     #expense{
         color: white;
-        padding-bottom: 60px;
     }
 
     .month-title{

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtPage class="content"/>
+    <NuxtPage :class="{'content':!hide}"/>
     <div></div>
     <div id="footer-menu" :class="{'hidden':hide}">
         <NuxtLink to="/tracker"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
@@ -51,8 +51,8 @@ import { useRouter, useRoute } from 'vue-router'
 
 <style>
   body {
-  margin: 0; /* Remove default margin to avoid unwanted spaces */
-  padding: 0; /* Remove default padding to avoid unwanted spaces */
+  margin: 0; 
+  padding: 0; 
   transition: all ease 0.5s;
   background-color: #121212;
   color: #fff;
@@ -62,7 +62,7 @@ import { useRouter, useRoute } from 'vue-router'
 .content {
   /* Calculate the height of the content area to make space for the footer */
   min-height: calc(100vh - 60px); /* 60px is the height of the footer */
-  padding-bottom: 100px; /* Ensure there is space for the footer */
+  padding-bottom: 90px; /* Ensure there is space for the footer */
 }
 
 #footer-menu {
