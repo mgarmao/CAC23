@@ -1,10 +1,10 @@
 <template>
     <div>
         <div id="body" class="noSelect">
-            <div id="header">
+            <!-- <div id="header">
                 <div id="back-btn" class="noSelect"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
                 <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
-            </div>
+            </div> -->
             <div id="month-ticker" v-if="isLoaded">
                 <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
                 <div id="selected-month-year">{{ selectedMonth }} {{ selectedYear }}</div>
@@ -181,7 +181,6 @@
 
     const newExpense = async()=>{
         if((inputName.value != "")&&(inputPrice.value!="")&&(chosenCategory.value!="")&&(chosenCategory.value!="Category")){
-            console.log(chosenCategory.value)
             await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
             inputName.value = ""
             inputDescription.value = ""
@@ -207,7 +206,6 @@
 
     const getThisMonthsTotal = ()=>{
         if(items.value!=undefined){
-            console.log(items.value)
             monthlyTotal.value = items.value.monthlyTotal
         }
         else{
@@ -225,7 +223,6 @@
         result = await getTrackerData(uid.value)
 
         items.value = result[0].filter(obj => obj.month.includes(selectedMonth3Char)&&obj.year.includes(selectedYear.value));
-        console.log(items.value)
         if(items.value.length!=0){
             items.value = items.value[0]
             if(items.value.month==month){
@@ -262,7 +259,6 @@
         }
 
         selectedMonth.value = months[(selectedMonthIndex.value)-1]
-        console.log((selectedMonthIndex.value))
         selectedMonth3Char = selectedMonth.value.substring(0,3)
         
         items.value = result[0].filter(obj => obj.month.includes(selectedMonth3Char)&&obj.year.includes(selectedYear.value));
@@ -278,7 +274,6 @@
 
     const goFowardMonth=()=>{
         selectedMonthIndex.value++
-        console.log(selectedMonthIndex.value)
         if((selectedMonthIndex.value)>=13){
             selectedMonthIndex.value = 1 
             selectedYear.value++

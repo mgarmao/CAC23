@@ -19,12 +19,12 @@
         const userCreds = await loginWithGoogle()
         const isThereADocAlreadyMade = await isThereUserDocWithUID(userCreds.uid)
         if(isThereADocAlreadyMade){
-            await navigateTo('/')
+            await navigateTo('/tracker')
         }
         else{
             const result = await createUserDoc(userCreds)
             if(result){
-                await navigateTo('/')
+                await navigateTo('/tracker')
             }
         }    
     }
@@ -32,14 +32,14 @@
     const loginEmail = async()=>{
         const result = await loginWithEmail(email.value, password.value)
         if(result==true){
-            await navigateTo('/')
+            await navigateTo('/tracker')
         }      
     }
 
     onBeforeMount(async()=>{
         const isSignedIn = await isUserSignedIn()
         if(isSignedIn){
-            await navigateTo('/')
+            await navigateTo('/tracker')
         }
     })
 </script>

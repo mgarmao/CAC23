@@ -48,6 +48,7 @@ import {getUID} from "../composables/auth.ts"
 
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthAbvs = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const lastDayOfMonths = [31,28,31,30,31,30,31,31,30,31,30,31]
     const date = new Date()
     const fullMonth = ref(monthNames[date.getMonth()])
     const day = Number(String(date).substring(8,10))
@@ -95,7 +96,6 @@ import {getUID} from "../composables/auth.ts"
 
         data.value = []
         data.value.push(fetchedData[0].filter(obj => obj.month.includes(selectMonth)&&obj.year.includes(selectYear)))
-        console.log(data.value)
         let previousDate = ""
         
         ///
@@ -366,17 +366,40 @@ import {getUID} from "../composables/auth.ts"
                             const previousPrice = catLineChartData.value[categoriesKeysArray.value[i]][0][(catLineChartData.value[categoriesKeysArray.value[i]][0].length)-1]
                             continuingPrice = previousPrice
                         }
-                        for(let d=thisItemsDay+1; d<=day; d++){
-                            let dDate = ""
-                            if(d>=10){
-                                dDate = thisMonthAndYear+"-"+d
+
+                        if(getThisMonthNumber()==selectedMonthIndex.value){
+                            for(let d=thisItemsDay+1; d<=day; d++){
+                                let dDate = ""
+                                if(d>=10){
+                                    dDate = thisMonthAndYear+"-"+d
+                                }
+                                else{
+                                    dDate = thisMonthAndYear+"-0"+d
+                                }
+                                catLineChartData.value[categoriesKeysArray.value[i]][0].push(continuingPrice)                
+                                catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
                             }
-                            else{
-                                dDate = thisMonthAndYear+"-0"+d
-                            }
-                            catLineChartData.value[categoriesKeysArray.value[i]][0].push(continuingPrice)                
-                            catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
                         }
+                        else{
+                            let lastDay = lastDayOfMonths[selectedMonthIndex.value]
+
+                            if((selectedMonthIndex.value+1)==2 && selectYear%4==0){
+                                lastDay = 29
+                            }
+
+                            for(let d=thisItemsDay+1; d<=lastDay; d++){
+                                let dDate = ""
+                                if(d>=10){
+                                    dDate = thisMonthAndYear+"-"+d
+                                }
+                                else{
+                                    dDate = thisMonthAndYear+"-0"+d
+                                }
+                                catLineChartData.value[categoriesKeysArray.value[i]][0].push(continuingPrice)                
+                                catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
+                            }
+                        }
+                        
                     }
                     else if (n+1>=categoryDocs.value[categoriesKeysArray.value[i]].length){
                         if(agragatingPrice){
@@ -408,7 +431,6 @@ import {getUID} from "../composables/auth.ts"
         else{
             noData.value = true
         }
-        console.log(catLineChartData.value)
         isLoaded.value = true
         ///
     }
