@@ -4,10 +4,10 @@
             <div id="back-btn" class="noSelect"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
             <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
         </div>
-        <div id="month-ticker">
-            <button @click="goBackMonth">,</button>
-            {{ selectedMonth }}
-            <button @click="goFowardMonth">,</button>
+        <div id="month-ticker" v-if="isLoaded">
+            <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
+            {{ selectedMonth }} {{ selectedYear }}
+            <button @click="goFowardMonth" class="flip"><img src="../public/angle-left-solid.svg" alt="]"></button>
         </div>
         <div id="month-stats">
             <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
@@ -61,7 +61,7 @@
                     <br>    
                 </div>
             </div>
-            <div v-if="noItems" id="no-items-message"> You Don't Have Any Purchases Yet</div>
+            <div v-if="noItems" id="no-items-message"> You Have No Purchases For This Month</div>
             <div v-if="isModalOpen">
                 <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
             </div>
@@ -81,8 +81,6 @@
 
     const noItems = ref(false)
 
-    let startingMonth = ""
-    
     const inputName = ref("")
     const inputDescription = ref("")
     const chosenCategory = ref("")
@@ -90,7 +88,7 @@
 
     const isModalOpen = ref(false)
     const isExpenseOpen = ref(false)
-
+    let result = []
     const targetExpenseID = ref()
     const targetExpenseDate = ref()
 
@@ -98,6 +96,7 @@
 
     const selectedMonthIndex = ref(0)
     const selectedMonth = ref("")
+
 
     const targetDocID = ref("")
     const targetName = ref("")
@@ -115,6 +114,10 @@
     const month = ref(months[d.getMonth()]); 
     const currentMonth = ref(month.value.substring(0,3))
     
+    let startingMonth = ""
+    let selectedMonth3Char = currentMonth.value
+    const selectedYear = ref(2023)
+
     const openModal = (docID,date)=>{
         isModalOpen.value = true;
         targetExpenseDate.value = date
@@ -202,14 +205,8 @@
 
     const getThisMonthsTotal = ()=>{
         if(items.value!=undefined){
-            let firstItemMonth = items.value.month
-            let thisMonthTrunked = month.value.substring(0,3)
-            if(firstItemMonth==thisMonthTrunked){
-                monthlyTotal.value = items.value.monthlyTotal
-            }
-            else{
-                monthlyTotal.value = 0
-            }
+            console.log(items.value)
+            monthlyTotal.value = items.value.monthlyTotal
         }
         else{
             noItems.value = true
@@ -223,21 +220,19 @@
 
     const getData = async()=>{
         uid.value = await getUID()
-        const result = await getTrackerData(uid.value)
-        console.log(result)
-        items.value = result[0][selectedMonthIndex.value]
-        
-        if(items.value!=undefined){
+        result = await getTrackerData(uid.value)
+
+        items.value = result[0].filter(obj => obj.month.includes(selectedMonth3Char)&&obj.year.includes(selectedYear.value));
+        console.log(items.value)
+        if(items.value.length!=0){
+            items.value = items.value[0]
             if(items.value.month==month){
                 thisMonthHasAnItem.value = true
             }
-
-            if(items.value.length==0){
-                noItems.value = true
-            }
-            else{
-                noItems.value = false
-            }
+        }
+        else{
+            items.value = undefined
+            noItems.value = true
         }
         getThisMonthsTotal()
     }
@@ -257,30 +252,68 @@
     }
 
     const goBackMonth = ()=>{
-        selectedMonthIndex.value++
-        selectedMonth.value = months[(startingMonth-selectedMonthIndex.value)-1]
-        getData()
+        selectedMonthIndex.value--
+
+        if((selectedMonthIndex.value)<=0){
+            selectedMonthIndex.value = 12
+            selectedYear.value--
+        }
+
+        selectedMonth.value = months[(selectedMonthIndex.value)-1]
+        console.log((selectedMonthIndex.value))
+        selectedMonth3Char = selectedMonth.value.substring(0,3)
+        
+        items.value = result[0].filter(obj => obj.month.includes(selectedMonth3Char)&&obj.year.includes(selectedYear.value));
+        items.value = items.value[0]
+        if(items.value==undefined){
+            noItems.value = true
+        }
+        else{
+            noItems.value = false
+        }
+        
     }
 
     const goFowardMonth=()=>{
-        if(!(selectedMonthIndex.value<=0)){
-            selectedMonthIndex.value--
-            selectedMonth.value = months[(startingMonth-selectedMonthIndex.value)-1]
-            getData()
+        
+        selectedMonthIndex.value++
+        console.log(selectedMonthIndex.value)
+        if((selectedMonthIndex.value)>=13){
+            selectedMonthIndex.value = 1 
+            selectedYear.value++
         }
-       
+        
+        selectedMonth.value = months[(selectedMonthIndex.value)-1]
+        selectedMonth3Char = selectedMonth.value.substring(0,3)
+        items.value = result[0].filter(obj => obj.month.includes(selectedMonth3Char)&&obj.year.includes(selectedYear.value));
+        items.value = items.value[0]
+        
+        if(items.value==undefined){
+            noItems.value = true
+        }
+        else{
+            noItems.value = false
+        }
     }
-
-    onMounted(async () => {
-        await getData()
-        startingMonth = getMonthFromString(items.value.month)
-        selectedMonth.value = months[(startingMonth-selectedMonthIndex.value)-1]
-        isLoaded.value = true
-    });
 
     function getMonthFromString(mon){
         return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
     }
+
+    onMounted(async () => {
+        await getData()
+        if(items.value!=undefined){
+            startingMonth = getMonthFromString(items.value.month)
+            selectedMonthIndex.value = startingMonth
+            selectedMonth.value = months[(selectedMonthIndex.value)-1]
+        }
+        else{
+            startingMonth = getMonthFromString(currentMonth.value)
+            selectedMonthIndex.value = startingMonth
+            selectedMonth.value = months[(selectedMonthIndex.value)-1]
+        }
+        isLoaded.value = true
+    });
 
 </script>
 
@@ -330,7 +363,36 @@
         margin-top: 1rem;
         margin-bottom: 2rem;
     }
+
+    #month-ticker{
+        display: grid;
+        grid-template-columns: 1fr 3.4fr 1fr;
+        justify-content: center;
+        text-align: center;
+        font-size: 25px;
+        gap: 0px;
+        padding: 20px;
+        background-color: #2a2a2a;
+        border-radius: 5rem;
+
+        /* Center horizontally and limit width */
+        max-width: 350px; /* Set the maximum width you want */
+        margin: 0 auto; /* Center horizontally */
+
+    }
     
+    #month-ticker button{
+        background-color: rgba(0, 0, 0, 0);
+        border: none;
+        text-align: right;
+    }
+
+    #selected-year{
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: -1rem;
+    }
+
     #input-section{
         display: flex;
         justify-content: center;
@@ -510,5 +572,11 @@
 
     #no-items-message{
         text-align: center;
+    }
+
+    .flip{
+        transform: scaleX(-1);
+        text-align: left;
+        margin-left: -0.2rem;
     }
 </style>

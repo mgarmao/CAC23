@@ -2,7 +2,7 @@
     <div id="body">
         <h2 id="month"> {{ fullMonth }}</h2>
         <div id="heading-chart">
-            <h2 v-if="!noData" id="no-data-message">You Don't Have Any Expense For This Month Yet</h2>
+            <h2 v-if="isLoaded&&noData" id="no-data-message">You Don't Have Any Expense For This Month Yet</h2>
             <PieChart :labels="categoriesKeysArray" :values="categoriesValueArray" :width="190" v-if="isLoaded"></PieChart>
             <br>
             <br>
@@ -358,8 +358,12 @@ import {getUID} from "../composables/auth.ts"
 
         }      
 
+        console.log(data.value[0].length )
         if(data.value[0].length == 0){
-            noData.vlaue = true
+            noData.value = true
+        }
+        else{
+            noData.value = false
         }
     })
 
