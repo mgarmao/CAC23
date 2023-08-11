@@ -2,7 +2,7 @@
   <div>
     <NuxtPage :class="{'content':!hide}"/>
     <div></div>
-    <div id="footer-menu" :class="{'hidden':hide}">
+    <div id="footer-menu" :class="{'hidden':hide, 'noSelect':true}">
         <NuxtLink to="/tracker"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
         <NuxtLink to="/charts"><charts-icon :fillColor="chartsFillColor"></charts-icon></NuxtLink>
     </div>

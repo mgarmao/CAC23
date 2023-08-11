@@ -1,73 +1,75 @@
 <template>
-    <div id="body">
-        <div id="header">
-            <div id="back-btn" class="noSelect"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
-            <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
-        </div>
-        <div id="month-ticker" v-if="isLoaded">
-            <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
-            {{ selectedMonth }} {{ selectedYear }}
-            <button @click="goFowardMonth" class="flip"><img src="../public/angle-left-solid.svg" alt="]"></button>
-        </div>
-        <div id="month-stats">
-            <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
-        </div>
-
-        <div id="input-section">
-            <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
-            <div id="text-input">
-                <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
-                <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
+    <div>
+        <div id="body" class="noSelect">
+            <div id="header">
+                <div id="back-btn" class="noSelect"><NuxtLink to="/"><img src="../public/angle-left-solid.svg" alt="back"></NuxtLink></div>
+                <div id="profile-btn"><img src="../public/user-solid.svg" alt="profile" id="profile-icon"></div>
+            </div>
+            <div id="month-ticker" v-if="isLoaded">
+                <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
+                <div id="selected-month-year">{{ selectedMonth }} {{ selectedYear }}</div>
+                <button @click="goFowardMonth" class="flip"><img src="../public/angle-left-solid.svg" alt="]"></button>
+            </div>
+            <div id="month-stats">
+                <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
             </div>
 
-            <div id="category-price-input" class="noSelect">
-                <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
-                <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false">
-                    <option value="" disabled selected >Category</option>
-                    <option value="Food">Food</option>
-                    <option value="Travel">Travel</option>
-                    <option value="Tech">Tech</option>
-                    <option value="Other">Other</option>
-                </select>
-                
-            </div>
-                
-        </div>
-
-        <div id="expense">
-            <div v-if="!isLoaded">
-                Loading...
-            </div>
-            <div v-if="isLoaded && !noItems">
-                <!-- <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div> -->
-                <div v-for="item in items.data" :key="item.month">
-                    {{updateExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)}}
-                    <div class="item noSelect" @click.stop="openExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
-                        <div class="item-date">{{ toDate(item[2]) }}</div>
-                        <div :class="{'item-header':true, 'shrink': isDescriptionEmpty(item[0].Description)}" >
-                            <div :class="{'item-name':!isDescriptionEmpty(item[0].Description),'item-name-shrink':isDescriptionEmpty(item[0].Description)}" >{{ item[0].Name }}</div>
-                        </div>
-                        <br v-if="!isDescriptionEmpty(item[0].Description)">
-                        <div class="container">
-                            <div class="item-description" >{{ item[0].Description }}</div>
-                            <div class="item-details">                            
-                                <div class="item-category">{{ item[0].Category }}</div>
-                                <div class="item-price">${{ item[0].Price }}</div>
-                                <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1],item[2])"/>
-                            </div>  
-                        </div>            
-                    </div>
-                    <hr>
-                    <br>    
+            <div id="input-section">
+                <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
+                <div id="text-input">
+                    <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
+                    <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
                 </div>
+
+                <div id="category-price-input" class="noSelect">
+                    <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
+                    <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false">
+                        <option value="" disabled selected >Category</option>
+                        <option value="Food">Food</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Tech">Tech</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    
+                </div>
+                    
             </div>
-            <div v-if="noItems" id="no-items-message"> You Have No Purchases For This Month</div>
-            <div v-if="isModalOpen">
-                <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
+
+            <div id="expense">
+                <div v-if="!isLoaded">
+                    Loading...
+                </div>
+                <div v-if="isLoaded && !noItems">
+                    <!-- <div v-if="month.month!=currentMonth" class="month-title">{{ month.month }} {{ month.year }} <span class="past-month-total">Total: ${{ month.monthlyTotal }}</span></div> -->
+                    <div v-for="item in items.data" :key="item.month">
+                        {{updateExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)}}
+                        <div class="item noSelect" @click.stop="openExpense(item[1],item[0].Name,item[2],item[0].Description,item[0].Category,item[0].Price)">
+                            <div class="item-date">{{ toDate(item[2]) }}</div>
+                            <div :class="{'item-header':true, 'shrink': isDescriptionEmpty(item[0].Description)}" >
+                                <div :class="{'item-name':!isDescriptionEmpty(item[0].Description),'item-name-shrink':isDescriptionEmpty(item[0].Description)}" >{{ item[0].Name }}</div>
+                            </div>
+                            <br v-if="!isDescriptionEmpty(item[0].Description)">
+                            <div class="container">
+                                <div class="item-description" >{{ item[0].Description }}</div>
+                                <div class="item-details">                            
+                                    <div class="item-category">{{ item[0].Category }}</div>
+                                    <div class="item-price">${{ item[0].Price }}</div>
+                                    <img src="../public/more-icon.svg" alt="..." class="item-options" @click.stop="openModal(item[1],item[2])"/>
+                                </div>  
+                            </div>            
+                        </div>
+                        <hr>
+                        <br>    
+                    </div>
+                </div>
+                <div v-if="noItems" id="no-items-message"> You Have No Purchases For This Month</div>
+                <div v-if="isModalOpen">
+                    <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
+                </div>
+                <div v-if="isExpenseOpen">
+                    <Expense @close="closeExpense" @getData="getDataDelayed" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate" :docID="targetExpenseID" :UID="uid"/>
+                </div>  
             </div>
-            <div v-if="isExpenseOpen">
-                <Expense @close="closeExpense" @getData="getDataDelayed" :name="targetName" :description="targetDescription" :price="targetPrice" :dateAndTime="targetDate" :docID="targetExpenseID" :UID="uid"/>
-            </div>  
         </div>
     </div>
 </template>
@@ -275,7 +277,6 @@
     }
 
     const goFowardMonth=()=>{
-        
         selectedMonthIndex.value++
         console.log(selectedMonthIndex.value)
         if((selectedMonthIndex.value)>=13){
@@ -366,17 +367,16 @@
 
     #month-ticker{
         display: grid;
-        grid-template-columns: 1fr 3.4fr 1fr;
+        grid-template-columns: 1fr 2.2fr 1fr;
         justify-content: center;
         text-align: center;
-        font-size: 25px;
+        font-size: 20px;
         gap: 0px;
-        padding: 20px;
+        padding: 15px;
         background-color: #2a2a2a;
         border-radius: 5rem;
 
-        /* Center horizontally and limit width */
-        max-width: 350px; /* Set the maximum width you want */
+        max-width: 340px; /* Set the maximum width you want */
         margin: 0 auto; /* Center horizontally */
 
     }
@@ -387,8 +387,14 @@
         text-align: right;
     }
 
-    #selected-year{
-        font-size: 24px;
+    #month-ticker img{
+        width: 12px;
+        margin-top: 3px;
+    }
+
+    #selected-month-year{
+        font-size: 22px;
+        margin-top: 2px;
         text-align: center;
         margin-bottom: -1rem;
     }

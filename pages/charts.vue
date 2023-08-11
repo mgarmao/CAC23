@@ -1,24 +1,30 @@
 <template>
-    <div id="body">
-        <h2 id="month"> {{ fullMonth }}</h2>
-        <div id="heading-chart">
-            <h2 v-if="isLoaded&&noData" id="no-data-message">You Don't Have Any Expense For This Month Yet</h2>
-            <PieChart :labels="categoriesKeysArray" :values="categoriesValueArray" :width="190" v-if="isLoaded"></PieChart>
+    <div>
+        <div id="body">
+            <div id="month-ticker" >
+                <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
+                <div id="selected-month-year">{{ fullMonth }} {{ selectedYear }}</div>
+                <button @click="goFowardMonth" class="flip"><img src="../public/angle-left-solid.svg" alt="]"></button>
+            </div>            
             <br>
-            <br>
-            <div id="monthly-total" v-if="isLoaded">This Month's Total: ${{ data[0][0].monthlyTotal }}</div>
-        </div>
-        
-        <h1 v-if="isLoaded">Categorical Breakdown</h1>
-        <div v-for="category in categoriesKeysArray">
-            <div id="category-container">
-                <h3 id="category-title">{{ category }}: ${{ catLineChartData[category][0][(catLineChartData[category][0].length)-2] }}</h3>
-                <LineChart :xData="catLineChartData[category][1]" :yData="catLineChartData[category][0]" v-if="isLoaded"></LineChart>
+            <div id="heading-chart">
+                <h2 v-if="isLoaded&&noData" id="no-data-message">You Don't Have Any Expense For This Month Yet</h2>
+                <PieChart v-if="isLoaded&&!noData" :labels="categoriesKeysArray" :values="categoriesValueArray" :width="190"></PieChart>
+                <br>
+                <br>
+                <div  v-if="isLoaded&&!noData" id="monthly-total">This Month's Total: ${{ data[0][0].monthlyTotal }}</div>
             </div>
-            <br>
+            
+            <h1 v-if="isLoaded&&!noData">Categorical Breakdown</h1>
+            <div v-if="isLoaded&&!noData" v-for="category in categoriesKeysArray">
+                <div id="category-container">
+                    <h3 id="category-title">{{ category }}: ${{ catLineChartData[category][0][(catLineChartData[category][0].length)-2] }}</h3>
+                    <LineChart :xData="catLineChartData[category][1]" :yData="catLineChartData[category][0]" v-if="isLoaded"></LineChart>
+                </div>
+                <br>
+            </div>
         </div>
     </div>
-    
 </template>
 
 <script setup>
@@ -33,22 +39,68 @@ import {getUID} from "../composables/auth.ts"
 
     const catLineChartData = ref([])
 
-    const data = ref()
-
-    const noData = ref(false)
+    const data = ref([])
+    let uid = ""
+    let fetchedData = []
+    const noData = ref(true)
 
     const isLoaded = ref(false)
+
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthAbvs = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const date = new Date()
     const fullMonth = ref(monthNames[date.getMonth()])
-    const day = Number(String(date).substring(9,10))
+    const day = Number(String(date).substring(8,10))
+    const selectedMonthIndex = ref(1)
+    const selectedMonth = ref(monthNames[(date.getMonth())])
+    const selectedYear = ref(2023)
 
-    onMounted(async()=>{
-        const uid = await getUID()
-        data.value = await thisMonthsData(uid)
+
+    const goBackMonth = ()=>{
+        selectedMonthIndex.value--
+        if((selectedMonthIndex.value)<0){
+            selectedMonthIndex.value = 11
+            selectedYear.value--
+        }
+
+        selectedMonth.value = monthAbvs[(selectedMonthIndex.value)]
+        
+        updateCharts(selectedMonth.value,selectedYear.value)
+    }
+
+    const goFowardMonth=()=>{
+        selectedMonthIndex.value++
+        if((selectedMonthIndex.value)>=12){
+            selectedMonthIndex.value = 0
+            selectedYear.value++
+        }
+        
+        selectedMonth.value = monthAbvs[(selectedMonthIndex.value)]
+        updateCharts(selectedMonth.value,selectedYear.value)
+    }
+
+    function formatDateToYMD(date){
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
+    }
+
+    
+    const updateCharts = async(selectMonth, selectYear)=>{
+        isLoaded.value = false
+        fullMonth.value = monthNames[selectedMonthIndex.value]
+        fetchedData = await thisMonthsData(uid)
+
+        data.value = []
+        data.value.push(fetchedData[0].filter(obj => obj.month.includes(selectMonth)&&obj.year.includes(selectYear)))
+        console.log(data.value)
         let previousDate = ""
-
+        
+        ///
         if(data.value[0].length>0){
+            noData.value = false
             for(let i = 0; i<data.value[0][0].data.length; i++){
                 if(!(previousDate == formatDateToYMD(data.value[0][0].data[i][2]))){
                     dateValues.value.push(formatDateToYMD(new Date(data.value[0][0].data[i][2])))
@@ -190,10 +242,10 @@ import {getUID} from "../composables/auth.ts"
 
             categoriesKeysArray.value = Object.keys(categories)
             categoriesValueArray.value = Object.values(categories)
-            
+            ////    
+        
+            ////
             previousDate=""
-
-            
             for(let i=0; i<categoriesKeysArray.value.length; i++){
                 catLineChartData.value[categoriesKeysArray.value[i]] = []
                 catLineChartData.value[categoriesKeysArray.value[i]][0] = []
@@ -204,20 +256,19 @@ import {getUID} from "../composables/auth.ts"
                 let lastItemDay = 0
                 let lastUniqueDateIndex = 0
                 let agragatingPrice = false
-
+                
                 for(let n=1; n<categoryDocs.value[categoriesKeysArray.value[i]].length; n++){
                     const thisItemsDate = formatDateToYMD(timestampToDate(categoryDocs.value[categoriesKeysArray.value[i]][n][0].Date))
-                    const thisItemsDay = Number(thisItemsDate.substring(9,10))
+                    const thisItemsDay = Number(thisItemsDate.substring(8,10))
                     const thisMonthAndYear = thisItemsDate.substring(0,7)
-                
-                    const firstOfThisMonth = thisItemsDate.substring(0,9)+1
+                    const firstOfThisMonth = thisItemsDate.substring(0,8)+1
                     
                     const thisItemsPrice = categoryDocs.value[categoriesKeysArray.value[i]][n][0].Price
+
 
                     if(n==1&&(thisItemsDay!=1)){
                         catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)                
                         catLineChartData.value[categoriesKeysArray.value[i]][1].push(firstOfThisMonth)
-                        
                     }
 
                     if(n==1){
@@ -300,7 +351,7 @@ import {getUID} from "../composables/auth.ts"
                     }
 
                     //Continuing line until present day
-                    if(!(n+1<categoryDocs.value[categoriesKeysArray.value[i]].length)&&(thisItemsDay!=day)){
+                    if((n+1<=categoryDocs.value[categoriesKeysArray.value[i]].length)&&(thisItemsDay!=day)){
                         let continuingPrice = 0
                         if(agragatingPrice){
                             continuingPrice = agragatePrice
@@ -341,7 +392,7 @@ import {getUID} from "../composables/auth.ts"
                 }
                 catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)
             }
-   
+            
         
             // categoriesValueArray.value = Object.values(categories).map((amount) => ((amount / data.value[0][0].data.length)*100)) //Percent
             catLineChartData.value.sort(function (a, b) {
@@ -353,30 +404,38 @@ import {getUID} from "../composables/auth.ts"
                 }
                 return 0;
             });
-    
-            isLoaded.value = true
-
-        }      
-
-        console.log(data.value[0].length )
-        if(data.value[0].length == 0){
-            noData.value = true
         }
         else{
-            noData.value = false
+            noData.value = true
         }
-    })
-
-   
-
-    function formatDateToYMD(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        
-        return `${year}-${month}-${day}`;
+        console.log(catLineChartData.value)
+        isLoaded.value = true
+        ///
     }
 
+    const getThisYear = ()=>{
+        const date = new Date()
+        return date.getFullYear()
+    }
+
+    const getThisMonthThreeChar = ()=>{
+        const date = new Date()
+        const monthAbv = monthAbvs[date.getMonth()]
+        return monthAbv
+    }
+
+    const getThisMonthNumber =()=>{
+        const date = new Date()
+        return date.getMonth()
+    }
+
+    onMounted(async()=>{
+        uid = await getUID()
+        selectedYear.value = getThisYear()
+        selectedMonthIndex.value= getThisMonthNumber()
+        updateCharts(getThisMonthThreeChar(),getThisYear())
+        isLoaded.value = true
+    })
 </script>
 
 <style>
@@ -389,6 +448,45 @@ img[src$="../public/tracker-icon.svg"] #my-path {
 #body{
     margin: 0.2rem;
     padding: 0.2rem;
+}
+
+#month-ticker{
+    display: grid;
+    grid-template-columns: 1fr 2.2fr 1fr;
+    justify-content: center;
+    text-align: center;
+    font-size: 20px;
+    gap: 0px;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border-radius: 5rem;
+
+    max-width: 340px; /* Set the maximum width you want */
+    margin: 0 auto; /* Center horizontally */
+
+}
+
+#month-ticker button{
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    text-align: right;
+}
+
+#month-ticker img{
+    width: 12px;
+    margin-top: 3px;
+}
+.flip{
+    transform: scaleX(-1);
+    text-align: left;
+    margin-left: -0.2rem;
+}
+
+#selected-month-year{
+    font-size: 22px;
+    margin-top: 2px;
+    text-align: center;
+    margin-bottom: -1rem;
 }
 
 #heading-chart{
@@ -413,4 +511,6 @@ img[src$="../public/tracker-icon.svg"] #my-path {
 #category-title{
     margin-top: 0rem;
 }
+
+
 </style>
