@@ -190,7 +190,7 @@
             inputDescription.value = ""
             inputPrice.value = ""
             chosenCategory.value = "Category"
-            setTimeout(() => { getData() }, 500);
+            getDataDelayed()
         }
         else{
             if(inputName.value ==""){
@@ -219,7 +219,7 @@
     }
 
     const getDataDelayed = ()=>{
-        setTimeout(() => { getData() }, 200);
+        setTimeout(() => { getData() }, 300);
     }
 
     const getData = async()=>{
@@ -392,6 +392,7 @@
         max-width: 340px; /* Set the maximum width you want */
         margin: 0 auto; /* Center horizontally */
 
+        margin-top: 1.2rem;
     }
     
     #month-ticker button{

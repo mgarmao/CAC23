@@ -499,6 +499,7 @@ img[src$="../public/tracker-icon.svg"] #my-path {
     max-width: 340px; /* Set the maximum width you want */
     margin: 0 auto; /* Center horizontally */
 
+    margin-top: 1.2rem;
 }
 
 #month-ticker button{
@@ -551,6 +552,4 @@ img[src$="../public/tracker-icon.svg"] #my-path {
 #category-title{
     margin-top: 0rem;
 }
-
-
 </style>
