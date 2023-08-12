@@ -4,7 +4,7 @@
             <div id="month-ticker" >
                 <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
                 <div id="selected-month-year">{{ fullMonth }} {{ selectedYear }}</div>
-                <button @click="goFowardMonth" class="flip"><img src="../public/angle-left-solid.svg" alt="]"></button>
+                <button @click="goFowardMonth" class="flip"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
             </div>            
             <br>
             <div id="heading-chart">
@@ -44,6 +44,8 @@ import {getUID} from "../composables/auth.ts"
     let fetchedData = []
     const noData = ref(true)
 
+    const disableFowardBtn = ref(true)
+
     const isLoaded = ref(false)
 
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -67,17 +69,28 @@ import {getUID} from "../composables/auth.ts"
         selectedMonth.value = monthAbvs[(selectedMonthIndex.value)]
         
         updateCharts(selectedMonth.value,selectedYear.value)
+        disableFowardBtn.value = false
     }
 
     const goFowardMonth=()=>{
-        selectedMonthIndex.value++
-        if((selectedMonthIndex.value)>=12){
-            selectedMonthIndex.value = 0
-            selectedYear.value++
+        if(!(selectedMonthIndex.value==getThisMonthNumber()&&selectedYear.value==getThisYear())){
+            disableFowardBtn.value = false
+            
+            selectedMonthIndex.value++
+            if((selectedMonthIndex.value)>=12){
+                selectedMonthIndex.value = 0
+                selectedYear.value++
+            }
+            
+            selectedMonth.value = monthAbvs[(selectedMonthIndex.value)]
+            updateCharts(selectedMonth.value,selectedYear.value)
+            if(selectedMonthIndex.value==getThisMonthNumber()&&selectedYear.value==getThisYear()){
+                disableFowardBtn.value = true
+            }
         }
-        
-        selectedMonth.value = monthAbvs[(selectedMonthIndex.value)]
-        updateCharts(selectedMonth.value,selectedYear.value)
+        else{
+            disableFowardBtn.value = true
+        }
     }
 
     function formatDateToYMD(date){
@@ -92,7 +105,6 @@ import {getUID} from "../composables/auth.ts"
     const updateCharts = async(selectMonth, selectYear)=>{
         isLoaded.value = false
         fullMonth.value = monthNames[selectedMonthIndex.value]
-        fetchedData = await thisMonthsData(uid)
 
         data.value = []
         data.value.push(fetchedData[0].filter(obj => obj.month.includes(selectMonth)&&obj.year.includes(selectYear)))
@@ -431,7 +443,7 @@ import {getUID} from "../composables/auth.ts"
         else{
             noData.value = true
         }
-        isLoaded.value = true
+        setTimeout(() => { isLoaded.value = true }, 100);
         ///
     }
 
@@ -453,6 +465,7 @@ import {getUID} from "../composables/auth.ts"
 
     onMounted(async()=>{
         uid = await getUID()
+        fetchedData = await thisMonthsData(uid)
         selectedYear.value = getThisYear()
         selectedMonthIndex.value= getThisMonthNumber()
         updateCharts(getThisMonthThreeChar(),getThisYear())
@@ -498,6 +511,11 @@ img[src$="../public/tracker-icon.svg"] #my-path {
     width: 12px;
     margin-top: 3px;
 }
+
+.disabled{
+    opacity: 30%;
+}
+
 .flip{
     transform: scaleX(-1);
     text-align: left;

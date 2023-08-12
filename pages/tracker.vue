@@ -8,7 +8,7 @@
             <div id="month-ticker" v-if="isLoaded">
                 <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
                 <div id="selected-month-year">{{ selectedMonth }} {{ selectedYear }}</div>
-                <button @click="goFowardMonth" class="flip"><img src="../public/angle-left-solid.svg" alt="]"></button>
+                <button @click="goFowardMonth" class="flip"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
             </div>
             <div id="month-stats">
                 <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
@@ -83,6 +83,8 @@
 
     const noItems = ref(false)
 
+    const disableFowardBtn = ref(true)
+
     const inputName = ref("")
     const inputDescription = ref("")
     const chosenCategory = ref("")
@@ -114,6 +116,8 @@
     const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const d = new Date();
     const month = ref(months[d.getMonth()]); 
+    const thisMonthNum = d.getMonth()
+    const thisYear = d.getFullYear()
     const currentMonth = ref(month.value.substring(0,3))
     
     let startingMonth = ""
@@ -268,27 +272,41 @@
         }
         else{
             noItems.value = false
-        }
-        
+        }            
+        disableFowardBtn.value = false
     }
 
     const goFowardMonth=()=>{
-        selectedMonthIndex.value++
-        if((selectedMonthIndex.value)>=13){
-            selectedMonthIndex.value = 1 
-            selectedYear.value++
-        }
-        
-        selectedMonth.value = months[(selectedMonthIndex.value)-1]
-        selectedMonth3Char = selectedMonth.value.substring(0,3)
-        items.value = result[0].filter(obj => obj.month.includes(selectedMonth3Char)&&obj.year.includes(selectedYear.value));
-        items.value = items.value[0]
-        
-        if(items.value==undefined){
-            noItems.value = true
+        if(!(selectedMonthIndex.value==thisMonthNum+1&&selectedYear.value==thisYear)){
+            disableFowardBtn.value = false
+            
+            selectedMonthIndex.value++
+
+            
+
+            if((selectedMonthIndex.value)>=13){
+                selectedMonthIndex.value = 1 
+                selectedYear.value++
+            }
+            
+            selectedMonth.value = months[(selectedMonthIndex.value)-1]
+            selectedMonth3Char = selectedMonth.value.substring(0,3)
+            items.value = result[0].filter(obj => obj.month.includes(selectedMonth3Char)&&obj.year.includes(selectedYear.value));
+            items.value = items.value[0]
+            
+            if(items.value==undefined){
+                noItems.value = true
+            }
+            else{
+                noItems.value = false
+            }
+
+            if(selectedMonthIndex.value==thisMonthNum+1&&selectedYear.value==thisYear){
+                disableFowardBtn.value = true
+            }
         }
         else{
-            noItems.value = false
+            disableFowardBtn.value = true
         }
     }
 
@@ -387,6 +405,9 @@
         margin-top: 3px;
     }
 
+    .disabled{
+        opacity: 40%;
+    }
     #selected-month-year{
         font-size: 22px;
         margin-top: 2px;
