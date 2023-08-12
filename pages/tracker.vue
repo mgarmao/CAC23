@@ -274,6 +274,7 @@
             noItems.value = false
         }            
         disableFowardBtn.value = false
+        getThisMonthsTotal()
     }
 
     const goFowardMonth=()=>{
@@ -308,6 +309,7 @@
         else{
             disableFowardBtn.value = true
         }
+        getThisMonthsTotal()
     }
 
     function getMonthFromString(mon){
