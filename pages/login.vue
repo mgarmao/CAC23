@@ -66,8 +66,7 @@
         display: flex; 
         flex-direction: column;
 
-        -ms-transform: translateY(65%);
-        transform: translateY(65%);
+        margin-top: 40%;
     }
 
     input{

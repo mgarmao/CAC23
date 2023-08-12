@@ -506,6 +506,7 @@ img[src$="../public/tracker-icon.svg"] #my-path {
     background-color: rgba(0, 0, 0, 0);
     border: none;
     text-align: right;
+    cursor: pointer;
 }
 
 #month-ticker img{

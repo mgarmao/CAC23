@@ -50,7 +50,7 @@ import { useRouter, useRoute } from 'vue-router'
 
 
 <style>
-  body {
+body {
   margin: 0; 
   padding: 0; 
   transition: all ease 0.5s;

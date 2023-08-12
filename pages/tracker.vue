@@ -8,7 +8,7 @@
             <div id="month-ticker" v-if="isLoaded">
                 <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
                 <div id="selected-month-year">{{ selectedMonth }} {{ selectedYear }}</div>
-                <button @click="goFowardMonth" class="flip"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
+                <button @click="goFowardMonth" :class="{'flip':true,'disabled':disableFowardBtn}"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
             </div>
             <div id="month-stats">
                 <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
@@ -399,6 +399,7 @@
         background-color: rgba(0, 0, 0, 0);
         border: none;
         text-align: right;
+        cursor: pointer;
     }
 
     #month-ticker img{
@@ -406,9 +407,11 @@
         margin-top: 3px;
     }
 
-    .disabled{
+    #month-ticker button.disabled{
         opacity: 40%;
+        cursor:default;
     }
+
     #selected-month-year{
         font-size: 22px;
         margin-top: 2px;
@@ -438,6 +441,11 @@
         font-size: 30px;
         color: black;
         cursor: pointer;
+    }
+
+    #plus-btn.disabled{
+        cursor:default;
+        opacity: 30%;
     }
 
     #text-input{
