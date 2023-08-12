@@ -2,7 +2,7 @@
     <div class="modal-overlay" @click.self="handleClose" :class="{ 'fade-in': isOpen, 'fade-out':!isOpen}">
         <div class="modal-container" :class="{ 'slide-in': isOpen, 'slide-out':!isOpen}">
             <div>
-              <input type="date" id="date-input" :max="today" v-model="date" @click="checkIfDateInput" @keypress="checkIfDateInput">
+              <input type="date" id="date-input" :max="today" v-model="date" @click="checkIfDateInput" @keypress="checkIfDateInput" @change="checkIfDateInput">
               <input type="time" id="time-input" v-model="time">
               <br>
               <button @click="handleDateChange" id="change-btn" :disabled="buttonDisabled">Change Date</button>
