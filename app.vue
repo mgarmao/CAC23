@@ -72,7 +72,7 @@ import { useRouter, useRoute } from 'vue-router'
   width: 100%;
   background-color: #333;
   color: #fff;
-  padding: 10px;
+  padding: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   grid-gap: 0px;
