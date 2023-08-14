@@ -4,7 +4,7 @@
             <div id="month-ticker" >
                 <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
                 <div id="selected-month-year">{{ fullMonth }} {{ selectedYear }}</div>
-                <button @click="goFowardMonth" class="flip"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
+                <button @click="goFowardMonth" :class="{'flip':true,'disabled':disableFowardBtn}"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
             </div>            
             <br>
             <div id="heading-chart">
@@ -515,7 +515,11 @@ img[src$="../public/tracker-icon.svg"] #my-path {
 }
 
 .disabled{
-    opacity: 30%;
+    opacity: 65%;
+    cursor: default;
+}
+#month-ticker button.disabled{
+    cursor: default;
 }
 
 .flip{
