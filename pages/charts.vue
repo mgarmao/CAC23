@@ -2,13 +2,14 @@
     <div>
         <div id="body">
             <div id="month-ticker" >
-                <button @click="goBackMonth"><img src="../public/angle-left-solid.svg" alt="["></button>
+                <button @click="goBackMonth" class="noSelect"><img src="../public/angle-left-solid.svg" alt="["></button>
                 <div id="selected-month-year">{{ fullMonth }} {{ selectedYear }}</div>
-                <button @click="goFowardMonth" :class="{'flip':true,'disabled':disableFowardBtn}"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
+                <button @click="goFowardMonth" :class="{'flip':true,'disabled':disableFowardBtn,'noSelect':true}"><img :class="{'disabled':disableFowardBtn}" src="../public/angle-left-solid.svg" alt="]"></button>
             </div>            
             <br>
             <div id="heading-chart">
                 <h2 v-if="isLoaded&&noData" id="no-data-message">You Don't Have Any Expense For This Month Yet</h2>
+                <h3 v-if="!isLoaded">Loading...</h3>
                 <PieChart v-if="isLoaded&&!noData" :labels="categoriesKeysArray" :values="categoriesValueArray" :width="190"></PieChart>
                 <br>
                 <br>
@@ -17,7 +18,7 @@
             
             <h1 v-if="isLoaded&&!noData">Categorical Breakdown</h1>
             <div v-if="isLoaded&&!noData" v-for="category in categoriesKeysArray">
-                <div id="category-container">
+                <div id="category-container"> 
                     <h3 id="category-title">{{ category }}: ${{ catLineChartData[category][0][(catLineChartData[category][0].length)-2] }}</h3>
                     <LineChart :xData="catLineChartData[category][1]" :yData="catLineChartData[category][0]" v-if="isLoaded"></LineChart>
                 </div>

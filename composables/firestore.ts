@@ -246,3 +246,46 @@ export async function thisMonthsData(uid: string) {
 
     return [itemsByMonth];
 }
+
+export function getUsersCategories(UID:any) {
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+    return new Promise(async(resolve,reject)=>{
+        try{
+            const userRef = collection(db, "users");
+            const q = query(userRef, where("uid", "==", UID));
+            const querySnapshot = await getDocs(q);
+            console.log("get docs")
+            const queryDocsLength = querySnapshot.docs.length
+            if(queryDocsLength>=1){
+                querySnapshot.docs.forEach((thisDoc) => {
+                    try{
+                        const requestedDoc = thisDoc.data();
+                        resolve(requestedDoc.categories)
+                    }
+                    catch(error){
+                        reject(error)
+                    }
+                });
+            }
+            else{
+                resolve(false)
+            }
+        }
+        catch(error){
+            reject(error)
+        }
+    })
+}
+
+export async function createNewUserCategory (uid:string,userCategories:any,newCategory:string){
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+
+    const userRef = doc(db, "users", uid);
+    userCategories.push(newCategory)
+
+    await updateDoc(userRef, {
+        categories: userCategories
+    });
+}

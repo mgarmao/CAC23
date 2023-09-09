@@ -14,21 +14,18 @@
                 <div id="monthly-total">Monthly Total: $<span v-if="isLoaded">{{monthlyTotal}}</span></div>
             </div>
 
-            <div id="input-section">
-                <div id="plus-btn" :class="{'noSelect':true,'disabled':true}" @click="newExpense">+</div>
+            <div id="input-section" @click="checkFormValid" @keyup="checkFormValid">
+                <div id="plus-btn" :class="{'noSelect':true,'disabled':buttonDisabled}" @click="newExpense">+</div>
                 <div id="text-input">
                     <input id="name-input" placeholder="Name" v-model="inputName" :class="{'':!highlightInputName, 'highlight':highlightInputName}" @keypress="highlightInputName=false">
                     <textarea id="description-input" placeholder="Description" v-model="inputDescription"></textarea>
                 </div>
 
-                <div id="category-price-input" class="noSelect">
+                <div id="category-price-input" class="noSelect" v-if="isLoaded">
                     <input id="dollars-input" placeholder="$" v-model="inputPrice" :class="{'':!highlightPrice, 'highlight':highlightPrice}" type="number" @keypress="highlightPrice=false">
-                    <select id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false">
+                    <select @click="checkFormValid" id="category-selector" placeholder="Category" v-model="chosenCategory" :class="{'':!highlightCategory, 'highlight':highlightCategory}" @change="highlightCategory=false" >
                         <option value="" disabled selected >Category</option>
-                        <option value="Food">Food</option>
-                        <option value="Travel">Travel</option>
-                        <option value="Tech">Tech</option>
-                        <option value="Other">Other</option>
+                        <option v-for="category in userCategories" :value="category">{{category}}</option>
                     </select>
                     
                 </div>
@@ -90,6 +87,8 @@
     const chosenCategory = ref("")
     const inputPrice = ref("")
 
+    const userCategories = ref([])
+
     const isModalOpen = ref(false)
     const isExpenseOpen = ref(false)
     let result = []
@@ -97,6 +96,8 @@
     const targetExpenseDate = ref()
 
     const thisMonthHasAnItem = ref(false)
+    
+    const buttonDisabled = ref(true)
 
     const selectedMonthIndex = ref(0)
     const selectedMonth = ref("")
@@ -183,6 +184,18 @@
         return outputDate
     }
 
+    const checkFormValid = ()=>{
+        if((inputName.value != "")&&(inputPrice.value!="")&&(chosenCategory.value!="")&&(chosenCategory.value!="Category")){
+            buttonDisabled.value = false;
+        }
+        else{
+            buttonDisabled.value = true
+        }
+
+    }
+
+    
+
     const newExpense = async()=>{
         if((inputName.value != "")&&(inputPrice.value!="")&&(chosenCategory.value!="")&&(chosenCategory.value!="Category")){
             await createNewExpense(uid.value, inputName.value, inputDescription.value, inputPrice.value, chosenCategory.value)
@@ -219,7 +232,7 @@
     }
 
     const getDataDelayed = ()=>{
-        setTimeout(() => { getData() }, 300);
+        setTimeout(() => { getData() }, 500);
     }
 
     const getData = async()=>{
@@ -328,6 +341,8 @@
             selectedMonthIndex.value = startingMonth
             selectedMonth.value = months[(selectedMonthIndex.value)-1]
         }
+        let userCats = await getUsersCategories(uid.value)
+        userCategories.value = userCats
         isLoaded.value = true
     });
 
