@@ -9,13 +9,25 @@
                 <br>
             </div>
             <div class="container" v-if="isLoaded">
-                <div v-for="category in userCategories">
-                    {{category}} ..... <input type="number" >
+                Total Budget: ${{ Number(totalBudget) }}
+                <br>
+                <div v-if=" Math.round((thisMonthsTotal/totalBudget)*1000)/1000>1">
+                    Over budget by {{((Math.round((thisMonthsTotal/totalBudget)*1000)/10)-100)}}%
+                </div>
+                <div v-else>
+                    You have used {{ Math.round((thisMonthsTotal/totalBudget)*100) }}% of your budget
+                </div>
+                <br>
+                <br>
+                <div v-for="category in userCategories.length" :key="userCategories[category-1]">
+                    {{userCategories[category-1]}} ..... <input @keyup="updateTotalBudgetDisplay()" type="number" v-model="budgets[category-1]">
                     <br>
                     <br>
                 </div>
                 <button @click="createNewCategory()">+</button>
                 <input v-model="newCategory" type="text">
+                <br>
+                <button @click="saveBudgets()">Save</button>
             </div>
         </div>
     </div>
@@ -32,9 +44,11 @@ import {getUID} from "../composables/auth.ts"
     const noData = ref(true)
 
     const newCategory = ref('')
-
+    const budgets = ref([])
+    const totalBudget = ref(0)
     const isLoaded = ref(false)
 
+    const thisMonthsTotal = ref(0)
     const userCategories = ref([])
 
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -115,6 +129,7 @@ import {getUID} from "../composables/auth.ts"
         else{
             noData.value = true
         }
+        thisMonthsTotal.value = lineChartData.value[1][lineChartData.value[1].length-1]
         setTimeout(() => { isLoaded.value = true }, 300);
     }
 
@@ -139,6 +154,32 @@ import {getUID} from "../composables/auth.ts"
         newCategory.value = ""
     }
 
+    const saveBudgets = ()=>{
+        fillBudgetArray(budgets.value)
+        updateCategoryBudgets(uid,budgets.value)
+        totalBudget.value = getTotalBudget(budgets.value)
+    }
+
+    const fillBudgetArray = (budgetArray)=>{
+        for(let i=0; i<userCategories.value.length;i++){
+            if(budgetArray[i]==undefined){
+                budgetArray[i]="0"
+            }
+        }
+    }
+
+    const updateTotalBudgetDisplay = ()=>{
+        totalBudget.value = getTotalBudget(budgets.value)
+    }
+
+    const getTotalBudget = (budgetArray)=>{
+        let total = 0 
+        for(let i=0; i<userCategories.value.length;i++){
+            total=budgetArray[i]+total
+        }
+        return total
+    }
+
     onMounted(async()=>{
         uid = await getUID()
         fetchedData = await thisMonthsData(uid)
@@ -149,6 +190,9 @@ import {getUID} from "../composables/auth.ts"
         selectedYear.value = getThisYear()
         selectedMonthIndex.value= getThisMonthNumber()
         updateCharts(getThisMonthThreeChar(),getThisYear())
+        budgets.value = await getCatergoryBudgets(uid)
+        totalBudget.value = await getTotalBudget(budgets.value)
+        console.log(totalBudget.value)
     })
 </script>
 

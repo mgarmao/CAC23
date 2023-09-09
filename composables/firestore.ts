@@ -121,6 +121,8 @@ export async function createUserDoc(userCredential:any){
                 email: email,
                 uid: uid,
                 displayName: displayName,
+                categories:["Food","Housing","Transportation","Entertainment","Education","Utilities","Insurance","Gifts","Travel","Other"],
+                budget:[]
             });
             resolve(true)
         }
@@ -247,29 +249,20 @@ export async function thisMonthsData(uid: string) {
     return [itemsByMonth];
 }
 
-export function getUsersCategories(UID:any) {
+export function getUsersCategories(uid:any) {
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
     return new Promise(async(resolve,reject)=>{
         try{
-            const userRef = collection(db, "users");
-            const q = query(userRef, where("uid", "==", UID));
-            const querySnapshot = await getDocs(q);
-            console.log("get docs")
-            const queryDocsLength = querySnapshot.docs.length
-            if(queryDocsLength>=1){
-                querySnapshot.docs.forEach((thisDoc) => {
-                    try{
-                        const requestedDoc = thisDoc.data();
-                        resolve(requestedDoc.categories)
-                    }
-                    catch(error){
-                        reject(error)
-                    }
-                });
-            }
-            else{
-                resolve(false)
+            const userRef = doc(db, "users", uid);
+
+            const docSnap = await getDoc(userRef);
+
+            if (docSnap.exists()) {
+               resolve(docSnap.data().categories);
+            } 
+            else {
+                reject("No such document!");
             }
         }
         catch(error){
@@ -278,7 +271,7 @@ export function getUsersCategories(UID:any) {
     })
 }
 
-export async function createNewUserCategory (uid:string,userCategories:any,newCategory:string){
+export async function createNewUserCategory(uid:string,userCategories:any,newCategory:string){
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
 
@@ -288,4 +281,37 @@ export async function createNewUserCategory (uid:string,userCategories:any,newCa
     await updateDoc(userRef, {
         categories: userCategories
     });
+}
+
+export function getCatergoryBudgets(uid:any){
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+
+    return new Promise(async(resolve,reject)=>{
+        try{
+            const userRef = doc(db, "users", uid);
+
+            const docSnap = await getDoc(userRef);
+
+            if (docSnap.exists()) {
+               resolve(docSnap.data().budgets);
+            } 
+            else {
+                reject("No such document!");
+            }
+        }
+        catch(error){
+            reject(error)
+        }
+    })
+}
+
+export async function updateCategoryBudgets(uid:any,userBudgets:any){
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+    const userRef = doc(db, "users", uid);
+
+    await updateDoc(userRef, {
+        budgets: userBudgets
+    }); 
 }
