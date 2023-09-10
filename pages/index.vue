@@ -71,6 +71,7 @@
 
 <script setup>
     const price = ref(700)
+    await navigateTo('/tracker')
 </script>
 
 <style>
@@ -102,20 +103,6 @@
     a{
         text-decoration: none;
     }
-
-    .noSelect {
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-    .noSelect:focus {
-        outline: none !important;
-    }
-
 </style>
 
 <style scoped>

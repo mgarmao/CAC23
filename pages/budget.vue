@@ -208,8 +208,6 @@ import {getUID} from "../composables/auth.ts"
         updateCharts(getThisMonthThreeChar(),getThisYear())
         budgets.value = await getCatergoryBudgets(uid)
         totalBudget.value = await getTotalBudget(budgets.value)
-        console.log(budgets.value)
-        console.log(totalBudget.value)
     })
 </script>
 
@@ -373,6 +371,7 @@ button:disabled{
 .trash-btn{
     width: 1rem;
     margin-left: 0.9rem;
+    cursor: pointer;
 }
 
 </style>

@@ -8,7 +8,7 @@
             </div>            
             <br>
             <div id="heading-chart">
-                <h2 v-if="isLoaded&&noData" id="no-data-message">You Don't Have Any Expense For This Month Yet</h2>
+                <h3 v-if="isLoaded&&noData" id="no-data-message">You Don't Have Any Expense For This Month</h3>
                 <h3 v-if="!isLoaded">Loading...</h3>
                 <PieChart v-if="isLoaded&&!noData" :labels="categoriesKeysArray" :values="categoriesValueArray" :width="190"></PieChart>
                 <br>

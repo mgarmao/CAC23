@@ -59,7 +59,7 @@
                         <br>    
                     </div>
                 </div>
-                <div v-if="noItems" id="no-items-message"> You Have No Purchases For This Month</div>
+                <div v-if="noItems" id="no-items-message">You Don't Have Any Expense For This Month</div>
                 <div v-if="isModalOpen">
                     <ExpenseOptions @close="closeModal" @deletedItem="closeModelAndGetData" @dateChange="closeModelAndGetData" :docID="targetExpenseID" :UID="uid" :itemDate="targetExpenseDate"/>
                 </div>

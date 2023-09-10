@@ -3,7 +3,7 @@
     <NuxtPage :class="{'content':!hide}"/>
     <div></div>
     <div id="footer-menu" :class="{'hidden':hide, 'noSelect':true}">
-        <NuxtLink to="/tracker"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
+        <NuxtLink to="/tracker" class="noSelect"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
         <NuxtLink to="/charts"><charts-icon :fillColor="chartsFillColor"></charts-icon></NuxtLink>
         <NuxtLink to="/budget"><budget-icon :fillColor="budgetFillColor"></budget-icon></NuxtLink>
     </div>
@@ -21,7 +21,7 @@ import { useRouter, useRoute } from 'vue-router'
   const trackerFillColor = ref("#fff")
   const budgetFillColor = ref('#fff')
 
-  router.beforeEach ((to, from)=>{
+  router.beforeEach (async(to, from)=>{
     changeColors(to.fullPath)
   })
 
@@ -73,6 +73,20 @@ body {
   /* Calculate the height of the content area to make space for the footer */
   min-height: calc(100vh - 60px); /* 60px is the height of the footer */
   padding-bottom: 90px; /* Ensure there is space for the footer */
+}
+
+
+.noSelect {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.noSelect:focus {
+  outline: none !important;
 }
 
 #footer-menu {
