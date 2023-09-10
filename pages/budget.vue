@@ -27,11 +27,12 @@
                         <img class="trash-btn" @click="deleteCategory(category-1)" src="../public/trash-can-regular.svg" alt="trash">
                     </div>
                 </div>
+                <br>
                 <button @click="createNewCategory()" id="plus-button" class="button">+</button>
                 <input v-model="newCategory" type="text" placeholder=" Add New Category" class="align-left">
                 <br>
                 <br>
-                <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="save-button align-center" :disabled="saveButtonDisabled">Save</button>
+                <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="save-button align-center" :disabled="saveButtonDisabled">Save Budget</button>
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@
     <div id="footer-menu" :class="{'hidden':hide, 'noSelect':true}">
         <NuxtLink to="/tracker"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
         <NuxtLink to="/charts"><charts-icon :fillColor="chartsFillColor"></charts-icon></NuxtLink>
+        <NuxtLink to="/budget"><budget-icon :fillColor="budgetFillColor"></budget-icon></NuxtLink>
     </div>
   </div>
 </template>
@@ -18,6 +19,7 @@ import { useRouter, useRoute } from 'vue-router'
 
   const chartsFillColor = ref("#fff")
   const trackerFillColor = ref("#fff")
+  const budgetFillColor = ref('#fff')
 
   router.beforeEach ((to, from)=>{
     changeColors(to.fullPath)
@@ -34,14 +36,22 @@ import { useRouter, useRoute } from 'vue-router'
     if(path=="/charts"){
       chartsFillColor.value = "#B37FF2"
       trackerFillColor.value = "#fff"
+      budgetFillColor.value = '#fff'
     }
     else if(path=="/tracker"){
       chartsFillColor.value = "#fff"
       trackerFillColor.value = "#B37FF2"
+      budgetFillColor.value = '#fff'
+    }
+    else if(path=='/budget'){
+      chartsFillColor.value = "#fff"
+      trackerFillColor.value = "#fff"
+      budgetFillColor.value = '#B37FF2'
     }
     else{
       chartsFillColor.value = "#fff"
       trackerFillColor.value = "#fff"
+      budgetFillColor.value = "#fff"
     }
   }
 
@@ -74,7 +84,7 @@ body {
   color: #fff;
   padding: 8px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: auto auto auto;
   grid-gap: 0px;
   justify-items: center;
 }
