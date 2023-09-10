@@ -319,7 +319,7 @@ button:disabled{
     display: grid;
     grid-template-columns: 1fr 0.5fr 1fr; /* Three equal-width columns */
     gap: 10px; /* Add some gap between grid items */
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.5rem;
 }
 
 .save-button{
