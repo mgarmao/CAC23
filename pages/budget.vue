@@ -32,7 +32,7 @@
                 <input v-model="newCategory" type="text" placeholder=" Add New Category" class="align-left">
                 <br>
                 <br>
-                <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="button align-center" :disabled="saveButtonDisabled">Save</button>
+                <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="save-button align-center" :disabled="saveButtonDisabled">Save</button>
             </div>
         </div>
     </div>
@@ -322,12 +322,13 @@ button:disabled{
     gap: 10px; /* Add some gap between grid items */
 }
 
-.button{
+.save-button{
     border: none;
     background-color: rgb(32, 93, 199);
     color: white;
     border-radius: 1rem;
     padding: 0.5rem;
+    font-size: 15px;
 }
 
 .align-center{
