@@ -26,7 +26,6 @@
                         <input class="budget-input-field" @keyup="saveButtonDisabled=false" type="number" v-model="budgets[category-1]">
                         <img class="trash-btn" @click="deleteCategory(category-1)" src="../public/trash-can-regular.svg" alt="trash">
                     </div>
-                    <br>
                 </div>
                 <button @click="createNewCategory()" id="plus-button" class="button">+</button>
                 <input v-model="newCategory" type="text" placeholder=" Add New Category" class="align-left">
@@ -320,6 +319,7 @@ button:disabled{
     display: grid;
     grid-template-columns: 1fr 0.5fr 1fr; /* Three equal-width columns */
     gap: 10px; /* Add some gap between grid items */
+    margin-bottom: 0.7rem;
 }
 
 .save-button{
