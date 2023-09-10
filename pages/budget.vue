@@ -320,6 +320,11 @@ button:disabled{
     grid-template-columns: 1fr 0.5fr 1fr; /* Three equal-width columns */
     gap: 10px; /* Add some gap between grid items */
     margin-bottom: 0.5rem;
+    font-size: 17px;
+}
+
+.budget-input-field{
+    font-size: 16px;
 }
 
 .save-button{
