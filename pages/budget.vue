@@ -19,15 +19,20 @@
                 </div>
                 <br>
                 <br>
-                <div v-for="category in userCategories.length" :key="userCategories[category-1]">
-                    {{userCategories[category-1]}} ..... <input @keyup="updateTotalBudgetDisplay()" type="number" v-model="budgets[category-1]">
-                    <br>
+                <div v-for="category in userCategories.length" :key="userCategories[category-1]" class="budget-input">
+                    <div class="cat-name">{{userCategories[category-1]}}</div>
+                    <div class="seperator">..........</div>
+                    <div>
+                        <input class="budget-input-field" @keyup="saveButtonDisabled=false" type="number" v-model="budgets[category-1]">
+                        <img class="trash-btn" @click="deleteCategory(category-1)" src="../public/trash-can-regular.svg" alt="trash">
+                    </div>
                     <br>
                 </div>
-                <button @click="createNewCategory()">+</button>
-                <input v-model="newCategory" type="text">
+                <button @click="createNewCategory()" id="plus-button" class="button">+</button>
+                <input v-model="newCategory" type="text" placeholder=" Add New Category" class="align-left">
                 <br>
-                <button @click="saveBudgets()">Save</button>
+                <br>
+                <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="button align-center" :disabled="saveButtonDisabled">Save</button>
             </div>
         </div>
     </div>
@@ -47,7 +52,7 @@ import {getUID} from "../composables/auth.ts"
     const budgets = ref([])
     const totalBudget = ref(0)
     const isLoaded = ref(false)
-
+    const saveButtonDisabled = ref(true)
     const thisMonthsTotal = ref(0)
     const userCategories = ref([])
 
@@ -150,7 +155,10 @@ import {getUID} from "../composables/auth.ts"
     }
 
     const createNewCategory = ()=>{
-        createNewUserCategory(uid, userCategories.value, newCategory.value)
+        userCategories.value.push(newCategory.value)
+        budgets.value.push(0)
+        updateUserCategory(uid, userCategories.value)
+        updateCategoryBudgets(uid,budgets.value)
         newCategory.value = ""
     }
 
@@ -162,10 +170,11 @@ import {getUID} from "../composables/auth.ts"
 
     const fillBudgetArray = (budgetArray)=>{
         for(let i=0; i<userCategories.value.length;i++){
-            if(budgetArray[i]==undefined){
-                budgetArray[i]="0"
+            if(budgetArray[i]==undefined||budgetArray[i]==""){
+                budgetArray[i]=0
             }
         }
+        budgets.value = budgetArray
     }
 
     const updateTotalBudgetDisplay = ()=>{
@@ -174,10 +183,17 @@ import {getUID} from "../composables/auth.ts"
 
     const getTotalBudget = (budgetArray)=>{
         let total = 0 
-        for(let i=0; i<userCategories.value.length;i++){
+        for(let i=0; i<budgets.value.length;i++){
             total=budgetArray[i]+total
         }
         return total
+    }
+
+    const deleteCategory=(categoryIndex)=>{
+        userCategories.value.splice(categoryIndex,1)
+        budgets.value.splice(categoryIndex, 1);
+        updateCategoryBudgets(uid,budgets.value)
+        updateUserCategory(uid,userCategories.value)
     }
 
     onMounted(async()=>{
@@ -192,6 +208,7 @@ import {getUID} from "../composables/auth.ts"
         updateCharts(getThisMonthThreeChar(),getThisYear())
         budgets.value = await getCatergoryBudgets(uid)
         totalBudget.value = await getTotalBudget(budgets.value)
+        console.log(budgets.value)
         console.log(totalBudget.value)
     })
 </script>
@@ -203,6 +220,22 @@ img[src$="../public/tracker-icon.svg"] #my-path {
 </style>
 
 <style scoped>
+input{
+    text-align: center;
+    width: 50%;
+    border-radius: 10rem;
+    border: #282828;
+}
+
+input:focus{
+    outline: none; 
+    box-shadow: 0 0 2px 2px #1084ff; 
+}
+
+button:disabled{
+    opacity: 0.4;
+}
+
 #body{
     margin: 0.2rem;
     padding: 0.2rem;
@@ -280,6 +313,55 @@ img[src$="../public/tracker-icon.svg"] #my-path {
     background-color: #282828;
     border-radius: 1rem;
     padding: 1rem;
+    text-align: center;
+}
+
+.budget-input{
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 1fr; /* Three equal-width columns */
+    gap: 10px; /* Add some gap between grid items */
+}
+
+.button{
+    border: none;
+    background-color: rgb(32, 93, 199);
+    color: white;
+    border-radius: 1rem;
+    padding: 0.5rem;
+}
+
+.align-center{
+    display: block;
+    margin: 0 auto;
+}
+
+.seperator{
+    text-align: center;
+}
+
+.cat-name{
+    text-align: right;
+}
+
+.align-left{
+    text-align: left;
+}
+
+#plus-button{
+    border-radius: 1.5rem;
+    padding-top: 0.11rem;
+    padding-bottom: 0.11rem;
+    font-size: 1.2rem;
+    margin-right: 0.2rem;
+}
+
+.budget-input-field{
+    background-color: #d0d7eb;
+}
+
+.trash-btn{
+    width: 1rem;
+    margin-left: 0.9rem;
 }
 
 </style>

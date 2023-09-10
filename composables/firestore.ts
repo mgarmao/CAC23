@@ -271,12 +271,11 @@ export function getUsersCategories(uid:any) {
     })
 }
 
-export async function createNewUserCategory(uid:string,userCategories:any,newCategory:string){
+export async function updateUserCategory(uid:string,userCategories:any){
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
 
     const userRef = doc(db, "users", uid);
-    userCategories.push(newCategory)
 
     await updateDoc(userRef, {
         categories: userCategories
@@ -310,7 +309,7 @@ export async function updateCategoryBudgets(uid:any,userBudgets:any){
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
     const userRef = doc(db, "users", uid);
-
+    console.log(userBudgets)
     await updateDoc(userRef, {
         budgets: userBudgets
     }); 
