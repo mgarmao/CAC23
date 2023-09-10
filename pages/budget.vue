@@ -20,7 +20,7 @@
                 <br>
                 <br>
                 <div v-for="category in userCategories.length" :key="userCategories[category-1]" class="budget-input">
-                    <div class="cat-name">{{userCategories[category-1]}}</div>
+                    <div class="cat-name">{{userCategories[category-1]}} <span class="cat-percent">{{ Math.round((budgets[category-1]/getTotalBudget(budgets))*100) }}%</span></div>
                     <div class="seperator">..........</div>
                     <div>
                         <input class="budget-input-field" @keyup="saveButtonDisabled=false" type="number" v-model="budgets[category-1]">
@@ -316,7 +316,7 @@ button:disabled{
 
 .budget-input{
     display: grid;
-    grid-template-columns: 1fr 0.5fr 1fr; /* Three equal-width columns */
+    grid-template-columns: 1fr 0.2fr 1fr; /* Three equal-width columns */
     gap: 10px; /* Add some gap between grid items */
     margin-bottom: 0.5rem;
     font-size: 17px;
@@ -341,7 +341,7 @@ button:disabled{
 }
 
 .seperator{
-    text-align: center;
+    text-align: right;
 }
 
 .cat-name{
@@ -374,4 +374,8 @@ button:disabled{
     cursor: pointer;
 }
 
+.cat-percent{
+    color: rgba(255, 255, 255, 0.607);
+    font-size: 15px;
+}
 </style>
