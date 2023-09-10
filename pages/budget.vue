@@ -351,6 +351,7 @@ button:disabled{
 
 .align-left{
     text-align: left;
+    font-size: 16px;
 }
 
 #plus-button{
@@ -360,7 +361,7 @@ button:disabled{
     border-radius: 1.5rem;
     padding-top: 0.11rem;
     padding-bottom: 0.11rem;
-    font-size: 1.2rem;
+    font-size: 16px;
     margin-right: 0.2rem;
 }
 
