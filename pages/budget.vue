@@ -12,7 +12,7 @@
                 Total Budget: ${{ Number(totalBudget) }}
                 <br>
                 <div v-if=" Math.round((thisMonthsTotal/totalBudget)*1000)/1000>1">
-                    Over budget by {{((Math.round((thisMonthsTotal/totalBudget)*1000)/10)-100)}}%
+                    Over budget by {{((Math.round(((thisMonthsTotal/totalBudget)-1)*1000)/10))}}%
                 </div>
                 <div v-else>
                     You have used {{ Math.round((thisMonthsTotal/totalBudget)*100) }}% of your budget
@@ -21,15 +21,14 @@
                 <br>
                 <div v-for="category in userCategories.length" :key="userCategories[category-1]" class="budget-input">
                     <div class="cat-name">{{userCategories[category-1]}} <span class="cat-percent">{{ Math.round((budgets[category-1]/getTotalBudget(budgets))*100) }}%</span></div>
-                    <div class="seperator">..........</div>
                     <div>
                         <input class="budget-input-field" @keyup="saveButtonDisabled=false" type="number" v-model="budgets[category-1]">
                         <img class="trash-btn" @click="deleteCategory(category-1)" src="../public/trash-can-regular.svg" alt="trash">
                     </div>
                 </div>
                 <br>
-                <button @click="createNewCategory()" id="plus-button" class="button">+</button>
-                <input v-model="newCategory" type="text" placeholder=" Add New Category" class="align-left">
+                <button @click="createNewCategory()" :disabled="addBtnDisabled" id="plus-button" class="button">+</button>
+                <input @keyup="checkAddButtonDisabled()" v-model="newCategory" type="text" placeholder=" Add New Category" class="align-left" maxlength="15">
                 <br>
                 <br>
                 <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="save-button align-center" :disabled="saveButtonDisabled">Save Budget</button>
@@ -47,6 +46,8 @@ import {getUID} from "../composables/auth.ts"
     let uid = ""
     let fetchedData = []
     const noData = ref(true)
+
+    const addBtnDisabled = ref(true)
 
     const newCategory = ref('')
     const budgets = ref([])
@@ -155,11 +156,13 @@ import {getUID} from "../composables/auth.ts"
     }
 
     const createNewCategory = ()=>{
-        userCategories.value.push(newCategory.value)
-        budgets.value.push(0)
-        updateUserCategory(uid, userCategories.value)
-        updateCategoryBudgets(uid,budgets.value)
-        newCategory.value = ""
+        if(newCategory.value!=""){
+            userCategories.value.push(newCategory.value)
+            budgets.value.push(0)
+            updateUserCategory(uid, userCategories.value)
+            updateCategoryBudgets(uid,budgets.value)
+            newCategory.value = ""
+        }
     }
 
     const saveBudgets = ()=>{
@@ -196,6 +199,14 @@ import {getUID} from "../composables/auth.ts"
         updateUserCategory(uid,userCategories.value)
     }
 
+    const checkAddButtonDisabled =()=>{
+        if(newCategory.value!=""){
+            addBtnDisabled.value=false
+        }
+        else{
+            addBtnDisabled.value = true
+        }
+    }
     onMounted(async()=>{
         uid = await getUID()
         fetchedData = await thisMonthsData(uid)
@@ -316,7 +327,7 @@ button:disabled{
 
 .budget-input{
     display: grid;
-    grid-template-columns: 1fr 0.2fr 1fr; /* Three equal-width columns */
+    grid-template-columns: 1.2fr 1fr; /* Three equal-width columns */
     gap: 10px; /* Add some gap between grid items */
     margin-bottom: 0.5rem;
     font-size: 17px;
