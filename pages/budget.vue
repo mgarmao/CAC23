@@ -349,6 +349,9 @@ button:disabled{
 }
 
 #plus-button{
+    border: none;
+    background-color: rgb(32, 93, 199);
+    color: white;
     border-radius: 1.5rem;
     padding-top: 0.11rem;
     padding-bottom: 0.11rem;
