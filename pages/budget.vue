@@ -18,10 +18,9 @@
                     You have used {{ Math.round((thisMonthsTotal/totalBudget)*100) }}% of your budget
                 </div>
                 <br>
-                <br>
                 <div v-for="category in userCategories.length" :key="userCategories[category-1]" class="budget-input">
                     <div class="cat-name">{{userCategories[category-1]}} <span class="cat-percent">{{ Math.round((budgets[category-1]/getTotalBudget(budgets))*100) }}%</span></div>
-                    <div>
+                    <div class="cat-budget-input">
                         <input class="budget-input-field" @keyup="saveButtonDisabled=false" type="number" v-model="budgets[category-1]">
                         <img class="trash-btn" @click="deleteCategory(category-1)" src="../public/trash-can-regular.svg" alt="trash">
                     </div>
@@ -331,6 +330,7 @@ button:disabled{
     gap: 10px; /* Add some gap between grid items */
     margin-bottom: 0.5rem;
     font-size: 17px;
+    margin-bottom: 1.5rem;
 }
 
 .budget-input-field{
@@ -357,6 +357,15 @@ button:disabled{
 
 .cat-name{
     text-align: right;
+    margin-right: 0.8rem;
+    font-size: 18px;
+}
+
+.cat-budget-input{
+    display: inline-block;
+    text-align: left;
+    margin-left: 0.8rem;
+    margin-top: -0.4rem;
 }
 
 .align-left{
@@ -380,8 +389,9 @@ button:disabled{
 }
 
 .trash-btn{
-    width: 1rem;
+    width: 1.3rem;
     margin-left: 0.9rem;
+    margin-left: 1.8rem;
     cursor: pointer;
 }
 

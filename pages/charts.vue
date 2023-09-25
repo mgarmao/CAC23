@@ -15,6 +15,10 @@
                 <br>
                 <div  v-if="isLoaded&&!noData" id="monthly-total">This Month's Total: ${{ data[0][0].monthlyTotal }}</div>
             </div>
+
+            <div>
+                <h2>Month to Month Comparison {{ expensesThisTimeLastMonth }}</h2>
+            </div>
             
             <h1 v-if="isLoaded&&!noData">Categorical Breakdown</h1>
             <div v-if="isLoaded&&!noData" v-for="category in categoriesKeysArray">
@@ -57,8 +61,10 @@ import {getUID} from "../composables/auth.ts"
     const day = Number(String(date).substring(8,10))
     const selectedMonthIndex = ref(1)
     const selectedMonth = ref(monthNames[(date.getMonth())])
-    const selectedYear = ref(2023)
+    const selectedYear = ref(date.getFullYear())
+    const thisDay = ref(date.getDate())
 
+    const expensesThisTimeLastMonth = ref()
 
     const goBackMonth = ()=>{
         selectedMonthIndex.value--
@@ -444,6 +450,10 @@ import {getUID} from "../composables/auth.ts"
         else{
             noData.value = true
         }
+
+
+        console.log(expensesThisTimeLastMonth.value)
+
         setTimeout(() => { isLoaded.value = true }, 100);
         ///
     }
@@ -464,12 +474,17 @@ import {getUID} from "../composables/auth.ts"
         return date.getMonth()
     }
 
+    const getPreviousMonthComparison = async()=>{
+        expensesThisTimeLastMonth.value = await getMonthSpendingUpTo(uid,selectedMonthIndex.value,thisDay.value,selectedYear.value)
+    }
+
     onMounted(async()=>{
         uid = await getUID()
         fetchedData = await thisMonthsData(uid)
-        selectedYear.value = getThisYear()
-        selectedMonthIndex.value= getThisMonthNumber()
+        selectedYear.value = await getThisYear()
+        selectedMonthIndex.value= await getThisMonthNumber()
         updateCharts(getThisMonthThreeChar(),getThisYear())
+        getPreviousMonthComparison()
         isLoaded.value = true
     })
 </script>

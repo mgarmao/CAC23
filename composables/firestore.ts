@@ -314,3 +314,31 @@ export async function updateCategoryBudgets(uid:any,userBudgets:any){
         budgets: userBudgets
     }); 
 }
+
+export async function getMonthSpendingUpTo(uid:any,month:number,day:number,year:number){
+    
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const selectedMonth = months[month-1]
+
+    const monthData = await thisMonthsData(uid)
+    const selectedDateTimestamp = Timestamp.fromDate(new Date(year+'-'+month+'-'+day))
+    
+    let expenses = 0
+
+    for(let month in monthData[0]){
+        const thisMonthData =  monthData[0][month]
+        const thisMonth = thisMonthData.month
+        const thisYear = thisMonthData.year
+        if(thisMonth==selectedMonth&&Number(thisYear)==year){
+            console.log(thisMonthData)
+            for(let thisDayIndex in thisMonthData.data){
+                const thisDayData = thisMonthData.data[thisDayIndex]
+                const thisDayTimestamp = Timestamp.fromDate(new Date(thisDayData[2]))
+                if(thisDayTimestamp<=selectedDateTimestamp){
+                    expenses = expenses+thisDayData[0].Price
+                }
+            }
+        }
+    }
+    return expenses
+}

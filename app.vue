@@ -3,7 +3,7 @@
     <NuxtPage :class="{'content':!hide}"/>
     <div></div>
     <div id="footer-menu" :class="{'hidden':hide, 'noSelect':true}">
-        <NuxtLink to="/tracker" class="noSelect"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>      
+        <NuxtLink to="/tracker" class="noSelect"><tracker-icon :fillColor="trackerFillColor"></tracker-icon></NuxtLink>
         <NuxtLink to="/charts"><charts-icon :fillColor="chartsFillColor"></charts-icon></NuxtLink>
         <NuxtLink to="/budget"><budget-icon :fillColor="budgetFillColor"></budget-icon></NuxtLink>
     </div>
@@ -105,5 +105,19 @@ body {
 
 #footer-menu.hidden {
   display: none;
+}
+
+span{
+  text-align: center;
+}
+
+#budget-text{
+
+}
+#tracker-text{
+  color: white;
+}
+#overview-text{
+  
 }
 </style>
