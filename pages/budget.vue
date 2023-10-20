@@ -9,8 +9,7 @@
                 <br>
             </div>
             <div class="container" v-if="isLoaded">
-                Total Budget: ${{ Number(totalBudget) }}
-                <br>
+                <h3>Total Budget: ${{ Number(totalBudget) }}</h3>
                 <div v-if=" Math.round((thisMonthsTotal/totalBudget)*1000)/1000>1">
                     Over budget by {{((Math.round(((thisMonthsTotal/totalBudget)-1)*1000)/10))}}%
                 </div>
@@ -130,11 +129,11 @@ import {getUID} from "../composables/auth.ts"
                 totalPrice = totalPrice + lineChartData.value[1][i]
                 lineChartData.value[1][i] = totalPrice
             }
+            thisMonthsTotal.value = lineChartData.value[1][lineChartData.value[1].length-1]
         }
         else{
             noData.value = true
         }
-        thisMonthsTotal.value = lineChartData.value[1][lineChartData.value[1].length-1]
         setTimeout(() => { isLoaded.value = true }, 300);
     }
 

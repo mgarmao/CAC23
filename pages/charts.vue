@@ -16,8 +16,10 @@
                 <div  v-if="isLoaded&&!noData" id="monthly-total">This Month's Total: ${{ data[0][0].monthlyTotal }}</div>
             </div>
 
-            <div>
-                <h2>Month to Month Comparison {{ expensesThisTimeLastMonth }}</h2>
+            <div id="last-month-comparison">
+                <h3 v-if="currentMonthSelected&&isLoaded&&!noData&&(data[0][0].monthlyTotal-expensesThisTimeLastMonth)<0">Your Spending Is Down ${{ (data[0][0].monthlyTotal-expensesThisTimeLastMonth)*-1 }} Compared To This Time Last Month</h3>
+                <h3 v-if="currentMonthSelected&&isLoaded&&!noData&&(data[0][0].monthlyTotal-expensesThisTimeLastMonth)>0">Your Spending Is Up ${{ (data[0][0].monthlyTotal-expensesThisTimeLastMonth) }} Compared To This Time Last Month</h3>
+                <h3 v-show="currentMonthSelected&&isLoaded&&noData">Your Spending Is Down ${{ expensesThisTimeLastMonth }} Compared To This Time Last Month</h3>
             </div>
             
             <h1 v-if="isLoaded&&!noData">Categorical Breakdown</h1>
@@ -60,11 +62,16 @@ import {getUID} from "../composables/auth.ts"
     const fullMonth = ref(monthNames[date.getMonth()])
     const day = Number(String(date).substring(8,10))
     const selectedMonthIndex = ref(1)
+    const currentMonthIndex = ref(date.getMonth())
     const selectedMonth = ref(monthNames[(date.getMonth())])
+    const currentYear = ref(date.getFullYear())
     const selectedYear = ref(date.getFullYear())
     const thisDay = ref(date.getDate())
 
     const expensesThisTimeLastMonth = ref()
+
+    const currentMonthSelected = ref(true)
+    
 
     const goBackMonth = ()=>{
         selectedMonthIndex.value--
@@ -77,6 +84,13 @@ import {getUID} from "../composables/auth.ts"
         
         updateCharts(selectedMonth.value,selectedYear.value)
         disableFowardBtn.value = false
+
+        if((currentMonthIndex.value!=selectedMonthIndex.value)||(currentYear.value!=selectedYear.value)){
+            currentMonthSelected.value = false
+        }
+        else{
+            currentMonthSelected.value = true
+        }
     }
 
     const goFowardMonth=()=>{
@@ -97,6 +111,13 @@ import {getUID} from "../composables/auth.ts"
         }
         else{
             disableFowardBtn.value = true
+        }
+
+        if((currentMonthIndex.value!=selectedMonthIndex.value)||(currentYear.value!=selectedYear.value)){
+            currentMonthSelected.value = false
+        }
+        else{
+            currentMonthSelected.value = true
         }
     }
 
@@ -435,8 +456,15 @@ import {getUID} from "../composables/auth.ts"
                 catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)
             }
             
-        
-            // categoriesValueArray.value = Object.values(categories).map((amount) => ((amount / data.value[0][0].data.length)*100)) //Percent
+
+            //Sets piechart to $ amount instead of # amount per item 
+            categoriesValueArray.value = []
+            for(let i=0; categoriesKeysArray.value.length-1>=i; i++){
+                console.log(catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-2])
+                categoriesValueArray.value.push(catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-2])
+            }
+
+            // categoriesValueArray.value = Object.values(categories).map((amount) => ((amount / data.value[0][0].data.length)*100)) //Percent of # of purchases
             catLineChartData.value.sort(function (a, b) {
                 if (a.name < b.name) {
                     return -1;
@@ -561,6 +589,11 @@ img[src$="../public/tracker-icon.svg"] #my-path {
     justify-content: center;
 }
 
+#last-month-comparison{
+    text-align: center;
+    color: #e3dee6;
+}
+
 #no-data-message{
     text-align: center;
 }
@@ -573,4 +606,5 @@ img[src$="../public/tracker-icon.svg"] #my-path {
 #category-title{
     margin-top: 0rem;
 }
+
 </style>
