@@ -112,3 +112,13 @@ export function isUserSignedIn(){
     }
   });
 }
+
+export function signoutUser(){
+  const { $auth } = useNuxtApp();
+  const auth:any = $auth;
+  signOut(auth).then(() => {
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  });
+}

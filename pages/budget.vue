@@ -1,7 +1,11 @@
 <template>
     <div>
         <div id="body">
-            <h1 v-if="isLoaded&&!noData">Budget</h1>
+            <div id="header">
+                <h1 v-if="isLoaded&&!noData">Budget</h1>
+                <img @click="userModal" id="user-img" src="../public/user-solid.svg" alt="">
+            </div>
+
             <div v-if="isLoaded&&!noData">
                 <div class="container"> 
                     <LineChart :xData="lineChartData[0]" :yData="lineChartData[1]" v-if="isLoaded"></LineChart>
@@ -31,6 +35,9 @@
                 <br>
                 <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="save-button align-center" :disabled="saveButtonDisabled">Save Budget</button>
             </div>
+
+            <UserModal v-if="openUserModal" @close="closeModal"/>
+            
         </div>
     </div>
 </template>
@@ -62,6 +69,8 @@ import {getUID} from "../composables/auth.ts"
     const selectedMonthIndex = ref(1)
     const selectedMonth = ref(monthNames[(date.getMonth())])
     const selectedYear = ref(2023)
+
+    const openUserModal = ref(false)
 
     function formatDateToYMD(date){
         const year = date.getFullYear();
@@ -205,6 +214,15 @@ import {getUID} from "../composables/auth.ts"
             addBtnDisabled.value = true
         }
     }
+
+    const userModal = ()=>{
+        openUserModal.value = true;
+    }
+
+    const closeModal = ()=>{
+        openUserModal.value = false;
+    }
+
     onMounted(async()=>{
         uid = await getUID()
         fetchedData = await thisMonthsData(uid)
@@ -241,6 +259,15 @@ input:focus{
 
 button:disabled{
     opacity: 0.4;
+}
+
+#header{
+    display: flex;
+}
+
+#user-img{
+    margin-left: auto;
+    margin-right: 0.3rem;
 }
 
 #body{

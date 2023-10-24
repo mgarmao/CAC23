@@ -82,14 +82,14 @@
         font-family: Arial, Helvetica, sans-serif;
     }
     
-    #header{
+    /* #header{
         margin: auto;
         display: flex;
         justify-content: space-between;
         align-items: center;
         background: linear-gradient(180deg, rgba(187, 134, 252, 0.00) 0%, #2A404B 16.67%, rgba(64, 64, 64, 0.00) 100%);
         padding: 10px;
-    }
+    } */
 
     #profile-btn{
         margin-left: auto;
