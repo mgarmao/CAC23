@@ -122,7 +122,7 @@ export async function createUserDoc(userCredential:any){
                 uid: uid,
                 displayName: displayName,
                 categories:["Food","Housing","Transportation","Entertainment","Education","Utilities","Insurance","Gifts","Travel","Other"],
-                budget:[]
+                budgets:[]
             });
             resolve(true)
         }
