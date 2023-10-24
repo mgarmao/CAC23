@@ -14,15 +14,24 @@
             </div>
             <div class="container" v-if="isLoaded">
                 <h3>Total Budget: ${{ Number(totalBudget) }}</h3>
-                <div v-if=" Math.round((thisMonthsTotal/totalBudget)*1000)/1000>1">
-                    Over budget by {{((Math.round(((thisMonthsTotal/totalBudget)-1)*1000)/10))}}%
+                
+                <div v-if="Number(totalBudget)>0">
+                    <div v-if=" Math.round((thisMonthsTotal/totalBudget)*1000)/1000>1">
+                        Over budget by {{((Math.round(((thisMonthsTotal/totalBudget)-1)*1000)/10))}}%
+                    </div>
+    
+                    <div v-else>
+                        You have used {{ Math.round((thisMonthsTotal/totalBudget)*100) }}% of your budget
+                    </div>
                 </div>
-                <div v-else>
-                    You have used {{ Math.round((thisMonthsTotal/totalBudget)*100) }}% of your budget
-                </div>
+
                 <br>
                 <div v-for="category in userCategories.length" :key="userCategories[category-1]" class="budget-input">
-                    <div class="cat-name">{{userCategories[category-1]}} <span class="cat-percent">{{ Math.round((budgets[category-1]/getTotalBudget(budgets))*100) }}%</span></div>
+                    <div class="cat-name">{{userCategories[category-1]}} 
+                        <span class="cat-percent" v-if="getTotalBudget(budgets)!=0">{{ Math.round((budgets[category-1]/getTotalBudget(budgets))*100) }}%</span>  
+                        <span class="cat-percent" v-else>0%</span>
+                    </div>
+                    
                     <div class="cat-budget-input">
                         <input class="budget-input-field" @keyup="saveButtonDisabled=false" type="number" v-model="budgets[category-1]">
                         <img class="trash-btn" @click="deleteCategory(category-1)" src="../public/trash-can-regular.svg" alt="trash">
