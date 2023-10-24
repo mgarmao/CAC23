@@ -342,3 +342,11 @@ export async function getMonthSpendingUpTo(uid:any,month:number,day:number,year:
     }
     return expenses
 }
+
+export async function deleteAccountData(uid:any){
+    const { $firestore } = useNuxtApp()
+    const db:any = $firestore
+    const userRef = doc(db, "users", uid);
+    
+    await deleteDoc(userRef);
+}

@@ -36,7 +36,7 @@
                 <button @click="saveBudgets(), updateTotalBudgetDisplay(), saveButtonDisabled = true" class="save-button align-center" :disabled="saveButtonDisabled">Save Budget</button>
             </div>
 
-            <UserModal v-if="openUserModal" @close="closeModal"/>
+            <UserModal v-if="openUserModal" :UID="uid" @close="closeModal"/>
             
         </div>
     </div>
@@ -268,6 +268,7 @@ button:disabled{
 #user-img{
     margin-left: auto;
     margin-right: 0.3rem;
+    cursor: pointer;
 }
 
 #body{

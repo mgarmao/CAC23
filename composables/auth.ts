@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,signOut} from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,signOut, deleteUser} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore"; 
 
 const provider = new GoogleAuthProvider();
@@ -117,6 +117,16 @@ export function signoutUser(){
   const { $auth } = useNuxtApp();
   const auth:any = $auth;
   signOut(auth).then(() => {
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  });
+}
+
+export function deleteAccount(){
+  const { $auth } = useNuxtApp();
+  const auth:any = $auth;
+  deleteUser(auth).then(() => {
     // Sign-out successful.
   }).catch((error) => {
     // An error happened.
