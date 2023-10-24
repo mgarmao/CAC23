@@ -17,13 +17,34 @@ import { useRouter, useRoute } from 'vue-router'
 
   const hide = ref(false)
 
+  const authNeededPages = ["budget","tracker","charts"]
+
   const chartsFillColor = ref("#fff")
   const trackerFillColor = ref("#fff")
   const budgetFillColor = ref('#fff')
 
   router.beforeEach (async(to, from)=>{
+    console.log("run")
     changeColors(to.fullPath)
   })
+
+  const checkUserStatus = (path)=>{
+    const userSignedIn = isUserSignedIn()
+    if(userSignedIn){
+      if(path=="login"||path=="signup"){
+        console.log("Redirect Home")
+      }
+    }
+
+    else{
+      for(let i=0;i<authNeededPages.length; i++){
+        console.log(authNeededPages[i])
+      }
+    }
+  }
+
+  checkUserStatus(route)
+
 
   const changeColors = (path)=>{
     if((path=="/login")||(path=="/signup")||(path=="/")){
