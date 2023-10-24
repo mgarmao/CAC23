@@ -460,7 +460,6 @@ import {getUID} from "../composables/auth.ts"
             //Sets piechart to $ amount instead of # amount per item 
             categoriesValueArray.value = []
             for(let i=0; categoriesKeysArray.value.length-1>=i; i++){
-                console.log(catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-2])
                 categoriesValueArray.value.push(catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-2])
             }
 
@@ -478,9 +477,6 @@ import {getUID} from "../composables/auth.ts"
         else{
             noData.value = true
         }
-
-
-        console.log(expensesThisTimeLastMonth.value)
 
         setTimeout(() => { isLoaded.value = true }, 100);
         ///
