@@ -65,8 +65,7 @@
         align-items: center;
         display: flex; 
         flex-direction: column;
-
-        margin-top: 40%;
+        transform: translate(0, 80%);
     }
 
     input{

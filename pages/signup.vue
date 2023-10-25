@@ -15,10 +15,9 @@
     const createUser=async ()=>{
         const userCreds = await createNewUserWithEmail(email.value,password.value)
         if(userCreds){
-            const result = await createUserDoc(userCreds)
-        }
-        if(result==true){
-            await navigateTo('/tracker')
+            createUserDoc(userCreds).then(()=>{
+                location.reload()
+            })
         }
     }
 
@@ -61,13 +60,12 @@
     }
 
     #sign-in {
-        margin-top: 50%;
         text-align: center;
         align-items: center;
         display: flex; 
         flex-direction: column;
 
-        margin-top: 40%;
+        transform: translate(0, 80%);
     }
 
     input{

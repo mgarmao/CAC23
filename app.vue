@@ -24,7 +24,6 @@ import { useRouter, useRoute } from 'vue-router'
   const budgetFillColor = ref('#fff')
 
   router.beforeEach (async(to, from)=>{
-    console.log("run")
     changeColors(to.fullPath)
   })
 

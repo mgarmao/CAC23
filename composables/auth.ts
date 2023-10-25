@@ -126,8 +126,9 @@ export function signoutUser(){
 export function deleteAccount(){
   const { $auth } = useNuxtApp();
   const auth:any = $auth;
-  deleteUser(auth).then(() => {
-    // Sign-out successful.
+  const user = auth.currentUser
+  deleteUser(user).then(() => {
+    location.reload()
   }).catch((error) => {
     // An error happened.
   });

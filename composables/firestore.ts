@@ -20,7 +20,6 @@ export async function getTrackerData(uid: string) {
 
             const q = query(colRef, orderBy("Date", "desc"));
             const collectionSnapshot = await getDocs(q);            
-            console.log("get docs")
             // Process each document in the collection
             collectionSnapshot.docs.forEach((thisDoc) => {
                 try{
@@ -93,7 +92,6 @@ export async function isThereUserDocWithUID(UID:string){
             const userRef = collection(db, "users");
             const q = query(userRef, where("uid", "==", UID));
             const querySnapshot = await getDocs(q);
-            console.log("get docs")
             const queryDocsLength = querySnapshot.docs.length
             if(queryDocsLength>=1){
                 resolve(true)
@@ -112,9 +110,21 @@ export async function createUserDoc(userCredential:any){
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
 
-    const email = userCredential.email
-    const displayName = userCredential.displayName
-    const uid = userCredential.uid
+    let email = ""
+    let displayName  = ""
+    let uid = ""
+
+    if(userCredential.uid!=undefined){
+        email = userCredential.email
+        displayName = userCredential.displayName
+        uid = userCredential.uid
+    }
+    else{
+        email = userCredential.user.email
+        displayName = userCredential.user.displayName
+        uid = userCredential.user.uid
+    }
+
     return new Promise(async(resolve,reject)=>{
         try{
             await setDoc(doc(db, "users", uid), {
@@ -200,7 +210,6 @@ export async function thisMonthsData(uid: string) {
 
             const q = query(colRef, orderBy("Date"));
             const collectionSnapshot = await getDocs(q);        
-            console.log("GET")    
 
             // Process each document in the collection
             collectionSnapshot.docs.forEach((thisDoc) => {
@@ -309,7 +318,6 @@ export async function updateCategoryBudgets(uid:any,userBudgets:any){
     const { $firestore } = useNuxtApp()
     const db:any = $firestore
     const userRef = doc(db, "users", uid);
-    console.log(userBudgets)
     await updateDoc(userRef, {
         budgets: userBudgets
     }); 
@@ -330,7 +338,6 @@ export async function getMonthSpendingUpTo(uid:any,month:number,day:number,year:
         const thisMonth = thisMonthData.month
         const thisYear = thisMonthData.year
         if(thisMonth==selectedMonth&&Number(thisYear)==year){
-            console.log(thisMonthData)
             for(let thisDayIndex in thisMonthData.data){
                 const thisDayData = thisMonthData.data[thisDayIndex]
                 const thisDayTimestamp = Timestamp.fromDate(new Date(thisDayData[2]))
