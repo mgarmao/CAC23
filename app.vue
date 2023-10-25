@@ -28,22 +28,22 @@ import { useRouter, useRoute } from 'vue-router'
     changeColors(to.fullPath)
   })
 
-  const checkUserStatus = (path)=>{
-    const userSignedIn = isUserSignedIn()
-    if(userSignedIn){
-      if(path=="login"||path=="signup"){
-        console.log("Redirect Home")
-      }
-    }
+  // const checkUserStatus = (path)=>{
+  //   const userSignedIn = isUserSignedIn()
+  //   if(userSignedIn){
+  //     if(path=="login"||path=="signup"){
+  //       console.log("Redirect Home")
+  //     }
+  //   }
 
-    else{
-      for(let i=0;i<authNeededPages.length; i++){
-        console.log(authNeededPages[i])
-      }
-    }
-  }
+  //   else{
+  //     for(let i=0;i<authNeededPages.length; i++){
+  //       console.log(authNeededPages[i])
+  //     }
+  //   }
+  // }
 
-  checkUserStatus(route)
+  // checkUserStatus(route)
 
 
   const changeColors = (path)=>{
