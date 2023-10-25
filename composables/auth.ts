@@ -117,7 +117,7 @@ export function signoutUser(){
   const { $auth } = useNuxtApp();
   const auth:any = $auth;
   signOut(auth).then(() => {
-    // Sign-out successful.
+    location.reload()
   }).catch((error) => {
     // An error happened.
   });
