@@ -10,7 +10,6 @@ export async function getTrackerData(uid: string) {
     const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
     const itemsByMonth: { month: string; year: string; data: any[]; monthlyTotal: number }[] = [];
-    
 
     async function getData(){
         try {
@@ -131,7 +130,7 @@ export async function createUserDoc(userCredential:any){
                 email: email,
                 uid: uid,
                 displayName: displayName,
-                categories:["Food","Housing","Transportation","Entertainment","Education","Utilities","Insurance","Gifts","Travel","Other"],
+                categories:["Food","Housing","Transportation","Entertainment","Education","Utilities","Insurance","Gifts","Health","Travel","Other"],
                 budgets:[]
             });
             resolve(true)
