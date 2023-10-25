@@ -224,6 +224,7 @@
     const getThisMonthsTotal = ()=>{
         if(items.value!=undefined){
             monthlyTotal.value = items.value.monthlyTotal
+            noItems.value = false
         }
         else{
             noItems.value = true
@@ -232,7 +233,7 @@
     }
 
     const getDataDelayed = ()=>{
-        setTimeout(() => { getData() }, 500);
+        setTimeout(() => { getData() }, 600);
     }
 
     const getData = async()=>{
