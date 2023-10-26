@@ -16,7 +16,7 @@
                 <div  v-if="isLoaded&&!noData" id="monthly-total">This Month's Total: ${{ data[0][0].monthlyTotal }}</div>
             </div>
 
-            <div id="last-month-comparison">
+            <div id="last-month-comparison" v-show="!noData">
                 <h3 v-if="currentMonthSelected&&isLoaded&&!noData&&(data[0][0].monthlyTotal-expensesThisTimeLastMonth)<0">Your Spending Is Down ${{ (data[0][0].monthlyTotal-expensesThisTimeLastMonth)*-1 }} Compared To This Time Last Month</h3>
                 <h3 v-if="currentMonthSelected&&isLoaded&&!noData&&(data[0][0].monthlyTotal-expensesThisTimeLastMonth)>0">Your Spending Is Up ${{ (data[0][0].monthlyTotal-expensesThisTimeLastMonth) }} Compared To This Time Last Month</h3>
                 <h3 v-show="currentMonthSelected&&isLoaded&&noData">Your Spending Is Down ${{ expensesThisTimeLastMonth }} Compared To This Time Last Month</h3>

@@ -131,7 +131,7 @@ export async function createUserDoc(userCredential:any){
                 uid: uid,
                 displayName: displayName,
                 categories:["Food","Housing","Transportation","Entertainment","Education","Utilities","Insurance","Gifts","Health","Travel","Other"],
-                budgets:[]
+                budgets:[0,0,0,0,0,0,0,0,0,0,0]
             });
             resolve(true)
         }

@@ -2,7 +2,7 @@
     <div>
         <div id="body">
             <div id="header">
-                <h1 v-if="isLoaded&&!noData">Budget</h1>
+                <h1 v-if="isLoaded">Budget</h1>
                 <img @click="userModal" id="user-img" src="../public/user-solid.svg" alt="">
             </div>
 
@@ -28,7 +28,7 @@
                 <br>
                 <div v-for="category in userCategories.length" :key="userCategories[category-1]" class="budget-input">
                     <div class="cat-name">{{userCategories[category-1]}} 
-                        <span class="cat-percent" v-if="getTotalBudget(budgets)!=0">{{ Math.round((budgets[category-1]/getTotalBudget(budgets))*100) }}%</span>  
+                        <span class="cat-percent" v-if="(getTotalBudget(budgets)!=0)&&(Math.round((budgets[category-1]/getTotalBudget(budgets))*100)!=NaN)&&(budgets[category-1]!=null)"> {{ Math.round((budgets[category-1]/getTotalBudget(budgets))*100) }}%</span>  
                         <span class="cat-percent" v-else>0%</span>
                     </div>
                     

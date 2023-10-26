@@ -8,9 +8,13 @@
         <NuxtLink to="/budget"><budget-icon :fillColor="budgetFillColor"></budget-icon></NuxtLink>
     </div>
   </div>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
 </template>
 
 <script setup>
+
 import { useRouter, useRoute } from 'vue-router'
   const router = useRouter()
   const route = useRoute()
@@ -68,7 +72,7 @@ body {
   transition: all ease 0.5s;
   background-color: #121212;
   color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .content {
