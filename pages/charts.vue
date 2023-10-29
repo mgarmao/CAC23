@@ -455,7 +455,7 @@ import {getUID} from "../composables/auth.ts"
                 }
                 catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)
             }
-            
+            console.log(catLineChartData.value)
 
             //Sets piechart to $ amount instead of # amount per item 
             categoriesValueArray.value = []
