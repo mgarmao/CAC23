@@ -431,8 +431,8 @@
     }
 
     #selected-month-year{
-        font-size: 22px;
-        margin-top: 2px;
+        font-size: 19px;
+        margin-top: 0px;
         text-align: center;
         margin-bottom: -1rem;
     }
