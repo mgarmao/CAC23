@@ -265,7 +265,7 @@ import {getUID} from "../composables/auth.ts"
         updateCharts(getThisMonthThreeChar(),getThisYear())
         budgets.value = await getCatergoryBudgets(uid)
         totalBudget.value = await getTotalBudget(budgets.value)
-        setTimeout(() => { isLoaded.value = true }, 300);
+        setTimeout(() => { isLoaded.value = true }, 100);
     })
 </script>
 
