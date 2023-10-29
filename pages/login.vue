@@ -16,17 +16,18 @@
     const password = ref("")
 
     const loginGoogle= async()=>{
-        const userCreds = await loginWithGoogle()
-        const isThereADocAlreadyMade = await isThereUserDocWithUID(userCreds.uid)
-        if(isThereADocAlreadyMade){
-            await navigateTo('/tracker')
-        }
-        else{
-            const result = await createUserDoc(userCreds)
-            if(result){
+        loginWithGoogle().then(async(userCreds)=>{
+            const isThereADocAlreadyMade = await isThereUserDocWithUID(userCreds.uid)
+            if(isThereADocAlreadyMade){
                 await navigateTo('/tracker')
             }
-        }    
+            else{
+                const result = await createUserDoc(userCreds)
+                if(result){
+                    await navigateTo('/tracker')
+                }
+            }    
+        })
     }
 
     const loginEmail = async()=>{

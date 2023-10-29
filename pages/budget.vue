@@ -3,7 +3,7 @@
         <div id="body">
             <div id="header">
                 <h1 v-if="isLoaded">Budget</h1>
-                <img @click="userModal" id="user-img" src="../public/user-solid.svg" alt="">
+                <img v-show="isLoaded" @click="userModal" id="user-img" src="../public/user-solid.svg" alt="">
             </div>
 
             <div v-if="isLoaded&&!noData">
@@ -12,6 +12,7 @@
                 </div>
                 <br>
             </div>
+
             <div class="container" v-if="isLoaded">
                 <h3>Total Budget: ${{ Number(totalBudget) }}</h3>
                 
@@ -231,6 +232,199 @@ import {getUID} from "../composables/auth.ts"
     const closeModal = ()=>{
         openUserModal.value = false;
     }
+
+    const createChartData= ()=>{
+        for(let i=0; i<categoriesKeysArray.value.length; i++){
+            catLineChartData.value[categoriesKeysArray.value[i]] = []
+            catLineChartData.value[categoriesKeysArray.value[i]][0] = []
+            catLineChartData.value[categoriesKeysArray.value[i]][1] = []
+
+            let agragatePrice = 0
+            let lastItemDate = ""
+            let lastItemDay = 0
+            let lastUniqueDateIndex = 0
+            let agragatingPrice = false
+            
+            for(let n=1; n<categoryDocs.value[categoriesKeysArray.value[i]].length; n++){
+                const thisItemsDate = formatDateToYMD(timestampToDate(categoryDocs.value[categoriesKeysArray.value[i]][n][0].Date))
+                const thisItemsDay = Number(thisItemsDate.substring(8,10))
+                const thisMonthAndYear = thisItemsDate.substring(0,7)
+                const firstOfThisMonth = thisItemsDate.substring(0,8)+1
+                
+                const thisItemsPrice = categoryDocs.value[categoriesKeysArray.value[i]][n][0].Price
+
+
+                if(n==1&&(thisItemsDay!=1)){
+                    catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)                
+                    catLineChartData.value[categoriesKeysArray.value[i]][1].push(firstOfThisMonth)
+                }
+
+                if(n==1){
+                    for(let d=2; d<thisItemsDay; d++){
+                        let dDate = ""
+                        if(d>=10){
+                            dDate = thisMonthAndYear+"-"+d
+                        }
+                        else{
+                            dDate = thisMonthAndYear+"-0"+d
+                        }
+                        catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)                
+                        catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
+                    }
+                    lastUniqueDateIndex = n-1
+                    catLineChartData.value[categoriesKeysArray.value[i]][0].push(thisItemsPrice)                
+                    catLineChartData.value[categoriesKeysArray.value[i]][1].push(thisItemsDate)              
+                }
+                
+                else{
+                    const previousPrice = catLineChartData.value[categoriesKeysArray.value[i]][0][(catLineChartData.value[categoriesKeysArray.value[i]][0].length)-1]
+                    
+                    if(lastItemDate==thisItemsDate){
+                        if(!agragatingPrice){
+                            agragatePrice = previousPrice
+                        }
+                        agragatePrice = thisItemsPrice + agragatePrice
+                        agragatingPrice = true
+                    }
+
+                    else if(thisItemsDay!=lastItemDay+1){
+                        let continuingPrice = previousPrice
+                        if(agragatingPrice){
+                            catLineChartData.value[categoriesKeysArray.value[i]][0][lastUniqueDateIndex]= agragatePrice                
+                            catLineChartData.value[categoriesKeysArray.value[i]][1][lastUniqueDateIndex] = lastItemDate
+                            continuingPrice = agragatePrice
+                            agragatePrice = 0
+                            agragatingPrice = false
+                        }
+
+                        lastUniqueDateIndex = catLineChartData.value[categoriesKeysArray.value[i]][0].length-1
+                        for(let d=lastItemDay+1; d<thisItemsDay; d++){
+                            let dDate = ""
+                            if(d>=10){
+                                dDate = thisMonthAndYear+"-"+d
+                            }
+                            else{
+                                dDate = thisMonthAndYear+"-0"+d
+                            }
+                            catLineChartData.value[categoriesKeysArray.value[i]][0].push(continuingPrice)                
+                            catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
+                        }  
+                        catLineChartData.value[categoriesKeysArray.value[i]][0].push(thisItemsPrice+continuingPrice)                
+                        catLineChartData.value[categoriesKeysArray.value[i]][1].push(thisItemsDate)       
+                    }
+    
+                    else{
+                        let continuingPrice = catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]
+                        if(agragatingPrice){
+                            catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]= agragatePrice                
+                            catLineChartData.value[categoriesKeysArray.value[i]][1][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1] = lastItemDate
+                            continuingPrice = agragatePrice
+                            agragatePrice = 0
+                            agragatingPrice = false
+                        }
+                        
+                        
+                        lastUniqueDateIndex = catLineChartData.value[categoriesKeysArray.value[i]][0].length-1
+                        catLineChartData.value[categoriesKeysArray.value[i]][0].push(thisItemsPrice+continuingPrice)                
+                        catLineChartData.value[categoriesKeysArray.value[i]][1].push(thisItemsDate)
+                    }
+                    
+                }
+
+                if(agragatingPrice&&(thisItemsDay!=lastItemDay)){
+                    catLineChartData.value[categoriesKeysArray.value[i]][0].push(agragatePrice)                
+                    catLineChartData.value[categoriesKeysArray.value[i]][1].push(lastItemDate)
+                    agragatePrice = 0
+                    agragatingPrice = false
+                }
+
+                //Continuing line until present day
+                if((n+1<=categoryDocs.value[categoriesKeysArray.value[i]].length)&&(thisItemsDay!=day)){
+                    let continuingPrice = 0
+                    if(agragatingPrice){
+                        continuingPrice = agragatePrice
+
+                        catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]=agragatePrice                
+                        catLineChartData.value[categoriesKeysArray.value[i]][1][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]= lastItemDate
+
+                        agragatePrice = 0
+                        agragatingPrice = false
+                    }
+                    else{
+                        const previousPrice = catLineChartData.value[categoriesKeysArray.value[i]][0][(catLineChartData.value[categoriesKeysArray.value[i]][0].length)-1]
+                        continuingPrice = previousPrice
+                    }
+
+                    if(getThisMonthNumber()==selectedMonthIndex.value){
+                        for(let d=thisItemsDay+1; d<=day; d++){
+                            let dDate = ""
+                            if(d>=10){
+                                dDate = thisMonthAndYear+"-"+d
+                            }
+                            else{
+                                dDate = thisMonthAndYear+"-0"+d
+                            }
+                            catLineChartData.value[categoriesKeysArray.value[i]][0].push(continuingPrice)                
+                            catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
+                        }
+                    }
+                    else{
+                        let lastDay = lastDayOfMonths[selectedMonthIndex.value]
+
+                        if((selectedMonthIndex.value+1)==2 && selectYear%4==0){
+                            lastDay = 29
+                        }
+
+                        for(let d=thisItemsDay+1; d<=lastDay; d++){
+                            let dDate = ""
+                            if(d>=10){
+                                dDate = thisMonthAndYear+"-"+d
+                            }
+                            else{
+                                dDate = thisMonthAndYear+"-0"+d
+                            }
+                            catLineChartData.value[categoriesKeysArray.value[i]][0].push(continuingPrice)                
+                            catLineChartData.value[categoriesKeysArray.value[i]][1].push(dDate)
+                        }
+                    }
+                    
+                }
+                else if (n+1>=categoryDocs.value[categoriesKeysArray.value[i]].length){
+                    if(agragatingPrice){
+                        catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1]=agragatePrice                
+                        catLineChartData.value[categoriesKeysArray.value[i]][1][catLineChartData.value[categoriesKeysArray.value[i]][0].length-1] = thisItemsDate
+                        agragatePrice = 0
+                        agragatingPrice = false
+                    }
+                }
+                lastItemDate = thisItemsDate
+                lastItemDay = thisItemsDay
+
+            }
+            catLineChartData.value[categoriesKeysArray.value[i]][0].push(0)
+        }
+        
+
+        //Sets piechart to $ amount instead of # amount per item 
+        categoriesValueArray.value = []
+        for(let i=0; categoriesKeysArray.value.length-1>=i; i++){
+            categoriesValueArray.value.push(catLineChartData.value[categoriesKeysArray.value[i]][0][catLineChartData.value[categoriesKeysArray.value[i]][0].length-2])
+        }
+
+        // categoriesValueArray.value = Object.values(categories).map((amount) => ((amount / data.value[0][0].data.length)*100)) //Percent of # of purchases
+        catLineChartData.value.sort(function (a, b) {
+            if (a.name < b.name) {
+                return -1;
+            }
+            if (a.name > b.name) {
+                return 1;
+            }
+            return 0;
+        });
+    }
+        
+    
+    
 
     onMounted(async()=>{
         uid = await getUID()

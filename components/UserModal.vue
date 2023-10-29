@@ -3,7 +3,7 @@
         <div id="modal-container">
 
             <div id="button-container" v-show="!areYouSure">
-                <button id="signOut" @click="signoutUser()">Sign Out</button>
+                <button id="signOut" @click="signOutUser()">Sign Out</button>
                 <br>
                 <br>
                 <br>

@@ -452,8 +452,8 @@
         background-color: #7997FF;
         margin-bottom: 3rem;
         padding: 11px;
-        padding-top: 3px;
-        padding-bottom: 3px;
+        padding-top: 0px;
+        padding-bottom: 0px;
         border-radius: 50%;
 
         font-size: 30px;

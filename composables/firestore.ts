@@ -88,11 +88,9 @@ export async function isThereUserDocWithUID(UID:string){
     const db:any = $firestore
     return new Promise(async(resolve,reject)=>{
         try{
-            const userRef = collection(db, "users");
-            const q = query(userRef, where("uid", "==", UID));
-            const querySnapshot = await getDocs(q);
-            const queryDocsLength = querySnapshot.docs.length
-            if(queryDocsLength>=1){
+            const userRef = doc(db, "users",UID);
+            const userDoc = await getDoc(userRef);
+            if(userDoc){
                 resolve(true)
             }
             else{
