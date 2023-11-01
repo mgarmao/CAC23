@@ -22,12 +22,12 @@
                 console.log(userCreds.uid)
                 console.log(isThereADocAlreadyMade)
                 if(isThereADocAlreadyMade){
+                    createUserDoc(userCreds)
                     await navigateTo('/tracker')
                 }
                 else{
                     createUserDoc(userCreds).then(async()=>{
                         await navigateTo('/tracker')
-
                     })
                 }    
             })  
