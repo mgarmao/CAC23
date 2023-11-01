@@ -17,16 +17,19 @@
 
     const loginGoogle= async()=>{
         const userCreds = await loginWithGoogle()
-        const isThereADocAlreadyMade = await isThereUserDocWithUID(userCreds.uid)
-        if(isThereADocAlreadyMade){
-            await navigateTo('/tracker')
-        }
-        else{
-            const result = await createUserDoc(userCreds)
-            if(result){
+        isThereUserDocWithUID(userCreds.uid).then(async(isThereADocAlreadyMade)=>{
+            console.log(isThereADocAlreadyMade)
+            if(isThereADocAlreadyMade){
                 await navigateTo('/tracker')
             }
-        }    
+            else{
+                createUserDoc(userCreds).then(async()=>{
+                    await navigateTo('/tracker')
+
+                })
+            }    
+        })
+       
     }
 
     const loginEmail = async()=>{
