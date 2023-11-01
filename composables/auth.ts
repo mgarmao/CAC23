@@ -74,7 +74,7 @@ export function signOutUser(){
   const { $auth } = useNuxtApp()
   const auth:any = $auth
   signOut(auth).then(() => {
-    console.log("log Out")
+    location.reload()
   }).catch((error) => {
 
   });
@@ -110,16 +110,6 @@ export function isUserSignedIn(){
     catch(error){
       console.log(error)
     }
-  });
-}
-
-export function signoutUser(){
-  const { $auth } = useNuxtApp();
-  const auth:any = $auth;
-  signOut(auth).then(() => {
-    location.reload()
-  }).catch((error) => {
-    // An error happened.
   });
 }
 

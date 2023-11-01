@@ -3,15 +3,16 @@
         <div id="body">
             <div id="header">
                 <h1 v-if="isLoaded">Budget</h1>
-                <img @click="userModal" id="user-img" src="../public/user-solid.svg" alt="">
+                <img v-show="isLoaded" @click="userModal" id="user-img" src="../public/user-solid.svg" alt="">
             </div>
 
             <div v-if="isLoaded&&!noData">
                 <div class="container"> 
-                    <LineChart :xData="lineChartData[0]" :yData="lineChartData[1]" v-if="isLoaded"></LineChart>
+                    <LineChart :yData="lineChartData[0]" :xData="lineChartData[1]" v-if="isLoaded"></LineChart>
                 </div>
                 <br>
             </div>
+
             <div class="container" v-if="isLoaded">
                 <h3>Total Budget: ${{ Number(totalBudget) }}</h3>
                 
@@ -79,6 +80,10 @@ import {getUID} from "../composables/auth.ts"
     const selectedMonth = ref(monthNames[(date.getMonth())])
     const selectedYear = ref(2023)
 
+    const todayDay = new Date().getDate()
+    const todayMonth = new Date().getMonth()+1
+    const todayYear = new Date().getFullYear()
+
     const openUserModal = ref(false)
 
     function formatDateToYMD(date){
@@ -91,68 +96,16 @@ import {getUID} from "../composables/auth.ts"
 
     
     const updateCharts = async(selectMonth, selectYear)=>{
-        isLoaded.value = false
         fullMonth.value = monthNames[selectedMonthIndex.value]
 
         data.value = []
         data.value.push(fetchedData[0].filter(obj => obj.month.includes(selectMonth)&&obj.year.includes(selectYear)))
         
         ///
-        if(data.value[0].length>0){
-            noData.value = false
-            
-            let expenses = []
-
-            for(let i=0; i<data.value[0][0].data.length; i++){
-                expenses.push(data.value[0][0].data[i])
-            }        
-            
-            lineChartData.value[0] = []
-            lineChartData.value[1] = []
-            
-            let previousDate = ""
-            let agragatingPrice = false
-            let agragatePrice = 0
-            
-            for(let i in expenses){
-                const expensePrice = expenses[i][0].Price
-                const expenseDate = formatDateToYMD(timestampToDate(expenses[i][0].Date))
-                
-                if(expenseDate == previousDate){
-                    agragatingPrice = true
-                    agragatePrice = agragatePrice + expensePrice
-                }
-
-                else{
-                    if(agragatingPrice){
-                        lineChartData.value[1][lineChartData.value[1].length-1]=agragatePrice
-                        lineChartData.value[0][lineChartData.value[1].length-1]= previousDate
-                    }
-
-                    lineChartData.value[1].push(expensePrice)
-                    lineChartData.value[0].push(expenseDate)
-
-                    agragatePrice = expensePrice
-                    agragatingPrice = false
-                }
-                previousDate = expenseDate
-            }
-            if(agragatingPrice){
-                lineChartData.value[1][lineChartData.value[1].length-1]= agragatePrice
-                lineChartData.value[0][lineChartData.value[1].length-1]= previousDate
-            }
-
-            let totalPrice = 0
-            for(let i in lineChartData.value[1]){
-                totalPrice = totalPrice + lineChartData.value[1][i]
-                lineChartData.value[1][i] = totalPrice
-            }
-            thisMonthsTotal.value = lineChartData.value[1][lineChartData.value[1].length-1]
+        if(data.value[0].length>0){            
+            createChartData(data.value[0][0])
+            noData.value=false
         }
-        else{
-            noData.value = true
-        }
-        setTimeout(() => { isLoaded.value = true }, 300);
     }
 
     const getThisYear = ()=>{
@@ -232,6 +185,74 @@ import {getUID} from "../composables/auth.ts"
         openUserModal.value = false;
     }
 
+    const createChartData= (thisMonthData)=>{
+        let chartData = []
+        chartData[0] = []
+        chartData[1] = []
+
+        let totalPrice = 0
+        let lastExpenseDay = 0
+        let aggregating = false
+
+        const monthExpense = thisMonthData.data
+        for(let i=0;i<monthExpense.length;i++){
+            const thisExpensePrice = monthExpense[i][0].Price
+            const thisExpenseStringDate = new Date(monthExpense[i][2])
+            const thisExpenseDate = formatDate(thisExpenseStringDate)
+            const thisExpenseYear = thisExpenseStringDate.getFullYear()
+            const thisExpenseMonth = thisExpenseStringDate.getMonth()+1
+            const thisExpenseDay = thisExpenseStringDate.getDate()
+            console.log(thisExpenseDay)
+            
+            if(i==0&&thisExpenseDay!=1){
+                for(let n=1; n<thisExpenseDay; n++){
+                    chartData[0].push(0)
+                    chartData[1].push(thisExpenseYear+"-"+thisExpenseMonth+"-"+n)
+                }
+            }
+            totalPrice = totalPrice+thisExpensePrice
+
+            if(lastExpenseDay==thisExpenseDay){
+                aggregating = true;
+            }
+            else if(aggregating){
+                chartData[0].push(totalPrice)
+                chartData[1].push(thisExpenseYear+"-"+thisExpenseMonth+"-"+lastExpenseDay)
+                aggregating = false
+            }
+            else{
+                chartData[0].push(totalPrice)
+                chartData[1].push(thisExpenseDate)
+            }
+
+            lastExpenseDay = thisExpenseDay
+            lastExpenseDay = thisExpenseDay
+        }
+        if(lastExpenseDay!=todayDay){
+            for(let m=lastExpenseDay; m<=todayDay;m++){
+                chartData[0].push(totalPrice)
+                chartData[1].push(todayYear+"-"+todayMonth+"-"+m)
+            }
+        }
+        lineChartData.value = chartData
+        console.log(lineChartData.value[1])
+    }   
+
+    function formatDate(date) {
+        var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+
+        return [year,month, day].join('-');
+    }
+ 
+        
     onMounted(async()=>{
         uid = await getUID()
         fetchedData = await thisMonthsData(uid)
@@ -244,6 +265,7 @@ import {getUID} from "../composables/auth.ts"
         updateCharts(getThisMonthThreeChar(),getThisYear())
         budgets.value = await getCatergoryBudgets(uid)
         totalBudget.value = await getTotalBudget(budgets.value)
+        setTimeout(() => { isLoaded.value = true }, 100);
     })
 </script>
 
