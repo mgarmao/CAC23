@@ -2,9 +2,11 @@
     <div id="sign-in">
         <h1 id="title">Sign up</h1>
         <input v-model="email" placeholder="Email">
-        <input v-model="password" placeholder="Password">
+        <input v-model="password" placeholder="Password" type="password">
         <button id="create-button" @click="createUser">Create Account</button>
         <button id="login-google" @click="loginGoogle"><img src="../public/google-logo.svg"><p>Continue With Google</p></button>
+        <br>
+        <button id="login-link" @click="navigateTo('/login')"><p>Already Have An Account? Login</p></button>
     </div>
 </template>
 
@@ -122,4 +124,29 @@
     #login-google p{
         font-size: 18px;
     }
+
+    #login-link {
+        margin-top: 1rem;
+        color: #fff;
+        background-color: rgb(121, 170, 255);
+        border-radius: 0.5rem;
+        border: none;
+        display: flex;
+
+        align-items: center; 
+        justify-content: center; 
+        cursor: pointer;
+
+        transition: ease 0.3s;
+    }
+
+    #login-link:hover{
+        background-color: rgba(91, 142, 231, 0.754);
+    }
+
+    @media screen and (min-width: 900px) {
+        #sign-in {
+            transform: translate(0, 50%);
+        }
+      }
 </style>

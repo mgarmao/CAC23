@@ -7,6 +7,9 @@
         <button @click="loginEmail" id="email-login-button">Login</button>
         <br>
         <button id="login-google" @click="loginGoogle"><img src="../public/google-logo.svg"><p>Login With Google</p></button>
+        <br>
+        <br>
+        <button id="signup-link" @click="navigateTo('/signup')"><p>Don't Have and Account? Signup</p></button>
         <!-- <button @click="signOutUser">LOG OUT</button> -->
     </div>
 </template>
@@ -125,5 +128,30 @@
 
     #login-google p{
         font-size: 18px;
+    }
+
+    #signup-link {
+        margin-top: 1rem;
+        color: #fff;
+        background-color: rgb(121, 170, 255);
+        border-radius: 0.5rem;
+        border: none;
+        display: flex;
+
+        align-items: center; 
+        justify-content: center; 
+        cursor: pointer;
+
+        transition: ease 0.3s;
+    }
+
+    #signup-link:hover{
+        background-color: rgba(91, 142, 231, 0.754);
+    }
+
+    @media screen and (min-width: 900px) {
+    #logins {
+        transform: translate(0, 40%);
+    }
     }
 </style>
