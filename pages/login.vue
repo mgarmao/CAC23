@@ -20,10 +20,7 @@
 
     const loginGoogle= async()=>{
         loginWithGoogle().then((userCreds)=>{
-            console.log(userCreds)
             isThereUserDocWithUID(userCreds.uid).then(async(isThereADocAlreadyMade)=>{
-                console.log(userCreds.uid)
-                console.log(isThereADocAlreadyMade)
                 if(isThereADocAlreadyMade){
                     await navigateTo('/tracker')
                 }

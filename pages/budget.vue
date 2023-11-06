@@ -202,7 +202,6 @@ import {getUID} from "../composables/auth.ts"
             const thisExpenseYear = thisExpenseStringDate.getFullYear()
             const thisExpenseMonth = thisExpenseStringDate.getMonth()+1
             const thisExpenseDay = thisExpenseStringDate.getDate()
-            console.log(thisExpenseDay)
             
             if(i==0&&thisExpenseDay!=1){
                 for(let n=1; n<thisExpenseDay; n++){
