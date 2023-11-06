@@ -18,11 +18,11 @@
                 
                 <div v-if="Number(totalBudget)>0">
                     <div v-if=" Math.round((thisMonthsTotal/totalBudget)*1000)/1000>1">
-                        Over budget by {{((Math.round(((thisMonthsTotal/totalBudget)-1)*1000)/10))}}%
+                        Over budget by {{((Math.round(((thisMonthsTotal/totalBudget)-1)*1000)/10))}}% 
                     </div>
     
                     <div v-else>
-                        You have used {{ Math.round((thisMonthsTotal/totalBudget)*100) }}% of your budget
+                        You have used {{ Math.round((thisMonthsTotal/totalBudget)*100) }}% of your budget 
                     </div>
                 </div>
 
@@ -235,7 +235,7 @@ import {getUID} from "../composables/auth.ts"
             }
         }
         lineChartData.value = chartData
-        console.log(lineChartData.value[1])
+        thisMonthsTotal.value = lineChartData.value[0][lineChartData.value[0].length-1]
     }   
 
     function formatDate(date) {
