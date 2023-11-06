@@ -90,7 +90,7 @@ export async function isThereUserDocWithUID(UID:string){
         try{
             const userRef = doc(db, "users",UID);
             const userDoc = await getDoc(userRef);
-            if(userDoc){
+            if(userDoc.exists()){
                 resolve(true)
             }
             else{
