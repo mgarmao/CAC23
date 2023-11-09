@@ -1,13 +1,12 @@
 <template>
     <div id="logins">
         <h1 id="title">Log in</h1>
-        <input v-model="email" type="email" placeholder="Email">
+        <input v-model="email" type="email" placeholder="Email" :class="true">
         <input v-model="password" type="password" placeholder="Password">
-        <br>
+        <p v-show="loginErrorMessage" id="errorMessage">Your Email Or Password Is Incorrect</p>
+        <p v-show="!loginErrorMessage"></p>
         <button @click="loginEmail" id="email-login-button">Login</button>
-        <br>
         <button id="login-google" @click="loginGoogle"><img src="../public/google-logo.svg"><p>Login With Google</p></button>
-        <br>
         <br>
         <button id="signup-link" @click="navigateTo('/signup')"><p>Don't Have and Account? Signup</p></button>
         <!-- <button @click="signOutUser">LOG OUT</button> -->
@@ -17,6 +16,8 @@
 <script setup>
     const email = ref("")
     const password = ref("")
+    
+    const loginErrorMessage = ref(false)
 
     const loginGoogle= async()=>{
         loginWithGoogle().then((userCreds)=>{
@@ -37,7 +38,10 @@
         const result = await loginWithEmail(email.value, password.value)
         if(result==true){
             await navigateTo('/tracker')
-        }      
+        }
+        else{
+            loginErrorMessage.value = true
+        }
     }
 
     onBeforeMount(async()=>{
@@ -81,6 +85,10 @@
         padding: 0.5rem;
     }
 
+    #errorMessage{
+        color: rgb(216, 56, 56);
+    }
+
     #email-login-button{
         font-size: 18px;
         background: #c392ff;  
@@ -99,7 +107,7 @@
     }
 
     #login-google {
-        margin-top: 1rem;
+        margin-top: 1.3rem;
         color: #fff;
         background-color: rgb(91, 142, 231);
         border-radius: 0.5rem;

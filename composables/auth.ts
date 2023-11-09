@@ -45,7 +45,7 @@ export async function loginWithEmail(email:string,password:string) {
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log(errorMessage)
-      reject(error)
+      resolve(false)
     });
   })
 }
