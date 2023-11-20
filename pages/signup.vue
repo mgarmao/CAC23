@@ -67,7 +67,7 @@
         display: flex; 
         flex-direction: column;
 
-        transform: translate(0, 80%);
+        transform: translate(0, 60%);
     }
 
     input{
