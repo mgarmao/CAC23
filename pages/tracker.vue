@@ -123,7 +123,7 @@
     
     let startingMonth = ""
     let selectedMonth3Char = currentMonth.value
-    const selectedYear = ref(2023)
+    const selectedYear = ref(new Date().getFullYear())
 
     const openModal = (docID,date)=>{
         isModalOpen.value = true;
